@@ -1,6 +1,6 @@
 "use strict";
 
-var skiffSprite;
+var skiffEntity;
 var manager = new ECS.EntityManager();
 
 var Game = {
@@ -12,17 +12,12 @@ var Game = {
   create: function () {
     menu.width = 650;
     menu.height = 400;
-    skiffSprite = manager.createEntity();
+    skiffEntity = manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
     // second-nature for lispy folks but javascript's this is apparently a pit
     // of vipers.
-    var SpriteComponent = Game.SpriteComponent.bind(null, 0, 0, 'skiff');
-    manager.addComponent(skiffSprite, SpriteComponent);
-  },
-
-  // Name duplication here is silly!
-  SpriteComponent : function SpriteComponent (x, y, spriteName) {
-    this.sprite = game.add.sprite(x, y, spriteName);
+    var SpriteComponent = Component.PhaserSprite.bind(null, 0, 0, 'skiff');
+    manager.addComponent(skiffEntity, SpriteComponent);
   },
 
   update: function () {
@@ -30,19 +25,19 @@ var Game = {
 
     if (cursors.up.isDown)
     {
-      skiffSprite.spriteComponent.sprite.y -= 5;
+      skiffEntity.phaserSprite.sprite.y -= 5;
     }
     else if (cursors.right.isDown)
     {
-      skiffSprite.spriteComponent.sprite.x += 5;
+      skiffEntity.phaserSprite.sprite.x += 5;
     }
     else if (cursors.down.isDown)
     {
-      skiffSprite.spriteComponent.sprite.y += 5;
+      skiffEntity.phaserSprite.sprite.y += 5;
     }
     else if (cursors.left.isDown)
     {
-      skiffSprite.spriteComponent.sprite.x -= 5;
+      skiffEntity.phaserSprite.sprite.x -= 5;
     }
   },
 

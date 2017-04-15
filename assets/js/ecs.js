@@ -1,3 +1,5 @@
+"use strict";
+
 var ECS = {
 
   nextID : 0,
