@@ -58,3 +58,11 @@ ECS.EntityManager.prototype.removeComponent = function(entity, Component) {
 
   return entity;
 }
+
+ECS.EntityManager.prototype.findByComponent = function(Component) {
+  var matching = [];
+  for (var i = 0; i < this._entities.length; i++) {
+    matching.push(this._entities[i]);
+  }
+  return matching;
+}
