@@ -12,7 +12,8 @@ var ECS = {
   },
 
   camelCaseFunctionName : function(f) {
-    return f.name.charAt(0).toLowerCase() + f.name.slice(1);
+    var fname = f.name.replace(/^bound /, '')
+    return fname.charAt(0).toLowerCase() + fname.slice(1);
   }
 }
 
