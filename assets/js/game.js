@@ -1,6 +1,7 @@
 "use strict";
 
 var skiffEntity;
+var dreadnought;
 var board;
 var manager = new ECS.EntityManager();
 
@@ -9,6 +10,7 @@ var Game = {
   preload : function() {
     game.load.image('white_square', './assets/images/white_square.png');
     game.load.image('skiff', './assets/images/skiff.png');
+    game.load.image('dreadnought', './assets/images/dreadnought.png');
   },
 
   create: function () {
@@ -37,6 +39,18 @@ var Game = {
                                                       skiffEntity.position.y,
                                                       'skiff');
     manager.addComponent(skiffEntity, SpriteComponent);
+
+    dreadnought = manager.createEntity();
+    // Honestly, this is a little silly, isn't it? I mean, I know partials are
+    // second-nature for lispy folks but javascript's this is apparently a pit
+    // of vipers.
+    manager.addComponent(dreadnought, Component.Position.bind(null, board, 10, 10));
+    SpriteComponent = Component.PhaserSprite.bind(null,
+                                                  dreadnought.position.x,
+                                                  dreadnought.position.y,
+                                                  'dreadnought');
+    manager.addComponent(dreadnought, SpriteComponent);
+    manager.addComponent(dreadnought, Component.FoeAI.bind(null, board, dreadnought.position));
   },
 
   update: function () {
@@ -45,18 +59,26 @@ var Game = {
     if (cursors.up.isDown)
     {
       skiffEntity.position.step(0, -1);
+      dreadnought.foeAI.pathTowards(skiffEntity.position.x,
+                                    skiffEntity.position.y);
     }
     else if (cursors.right.isDown)
     {
       skiffEntity.position.step(1, 0);
+      dreadnought.foeAI.pathTowards(skiffEntity.position.x,
+                                    skiffEntity.position.y);
     }
     else if (cursors.down.isDown)
     {
       skiffEntity.position.step(0, 1);
+      dreadnought.foeAI.pathTowards(skiffEntity.position.x,
+                                    skiffEntity.position.y);
     }
     else if (cursors.left.isDown)
     {
       skiffEntity.position.step(-1, 0);
+      dreadnought.foeAI.pathTowards(skiffEntity.position.x,
+                                    skiffEntity.position.y);
     }
   },
 

@@ -28,5 +28,6 @@ Level.Board.prototype.isEdge = function(x, y) {
 }
 
 Level.Board.prototype.isPassable = function(x, y) {
-  return !this._tiles[x][y].blocked;
+  return (x >= 0 && y >= 0 && x < this.width && y < this.height) &&
+    !this._tiles[x][y].blocked;
 }
