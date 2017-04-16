@@ -1,7 +1,5 @@
 "use strict";
 
-var skiffEntity;
-var dreadnought;
 var board;
 var manager = new ECS.EntityManager();
 
@@ -29,10 +27,11 @@ var Game = {
       }
     }
 
-    skiffEntity = manager.createEntity();
+    var skiffEntity = manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
     // second-nature for lispy folks but javascript's this is apparently a pit
     // of vipers.
+    manager.addComponent(skiffEntity, Component.Player);
     manager.addComponent(skiffEntity, Component.Position.bind(null, board, 5, 5));
     var SpriteComponent = Component.PhaserSprite.bind(null,
                                                       skiffEntity.position.x,
@@ -40,7 +39,7 @@ var Game = {
                                                       'skiff');
     manager.addComponent(skiffEntity, SpriteComponent);
 
-    dreadnought = manager.createEntity();
+    var dreadnought = manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
     // second-nature for lispy folks but javascript's this is apparently a pit
     // of vipers.
@@ -58,27 +57,31 @@ var Game = {
 
     if (cursors.up.isDown)
     {
-      skiffEntity.position.step(0, -1);
-      dreadnought.foeAI.pathTowards(skiffEntity.position.x,
-                                    skiffEntity.position.y);
+      var player = manager.findPlayer();
+      player.position.step(0, -1);
+      var foes = manager.findByComponent(Component.FoeAI);
+      foes.forEach(function(entity) { entity.foeAI.pathTowards(player.position.x, player.position.y); })
     }
     else if (cursors.right.isDown)
     {
-      skiffEntity.position.step(1, 0);
-      dreadnought.foeAI.pathTowards(skiffEntity.position.x,
-                                    skiffEntity.position.y);
+      var player = manager.findPlayer();
+      player.position.step(1, 0);
+      var foes = manager.findByComponent(Component.FoeAI);
+      foes.forEach(function(entity) { entity.foeAI.pathTowards(player.position.x, player.position.y); })
     }
     else if (cursors.down.isDown)
     {
-      skiffEntity.position.step(0, 1);
-      dreadnought.foeAI.pathTowards(skiffEntity.position.x,
-                                    skiffEntity.position.y);
+      var player = manager.findPlayer();
+      player.position.step(0, 1);
+      var foes = manager.findByComponent(Component.FoeAI);
+      foes.forEach(function(entity) { entity.foeAI.pathTowards(player.position.x, player.position.y); })
     }
     else if (cursors.left.isDown)
     {
-      skiffEntity.position.step(-1, 0);
-      dreadnought.foeAI.pathTowards(skiffEntity.position.x,
-                                    skiffEntity.position.y);
+      var player = manager.findPlayer();
+      player.position.step(-1, 0);
+      var foes = manager.findByComponent(Component.FoeAI);
+      foes.forEach(function(entity) { entity.foeAI.pathTowards(player.position.x, player.position.y); })
     }
   },
 

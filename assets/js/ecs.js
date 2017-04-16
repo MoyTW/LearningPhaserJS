@@ -6,7 +6,6 @@ var ECS = {
 
   Entity : function() {
     this.id = ECS.nextID++;
-    this._Components = [];
   },
 
   EntityManager : function() {
@@ -21,8 +20,8 @@ var ECS = {
 
 // Entity
 
-ECS.Entity.prototype.hasComponent = function(Component) {
-  return -1 != this._Components.indexOf(Component);
+ECS.Entity.prototype.hasComponent = function(TComponent) {
+  return ECS.camelCaseFunctionName(TComponent) in this;
 }
 
 // EntityManager
@@ -43,38 +42,39 @@ ECS.EntityManager.prototype.removeEntity = function(entity) {
   }
 }
 
-ECS.EntityManager.prototype.addComponent = function(entity, Component) {
-  if (entity._Components.indexOf(Component) > -1) {
+ECS.EntityManager.prototype.addComponent = function(entity, TComponent) {
+  if (entity.hasComponent(TComponent)) {
     throw new Error('You cannot attach two of the same component to an entity');
   }
 
-  entity._Components.push(Component);
-
-  var reifiedComponent = new Component();
-  entity[ECS.camelCaseFunctionName(Component)] = reifiedComponent;
+  var reifiedComponent = new TComponent();
+  entity[ECS.camelCaseFunctionName(TComponent)] = reifiedComponent;
   reifiedComponent.owner = entity;
 
   return entity;
 }
 
-ECS.EntityManager.prototype.removeComponent = function(entity, Component) {
-  var index = entity._Components.indexOf(Component);
-
-  if (index == -1) {
+ECS.EntityManager.prototype.removeComponent = function(entity, TComponent) {
+  if (!entity.hasComponent(TComponent)) {
     throw new Error('You cannot remove a component that the entity does not have');
   }
 
-  entity._Components.splice(index, 1);
-
-  delete entity[ECS.camelCaseFunctionName(Component)];
+  delete entity[ECS.camelCaseFunctionName(TComponent)];
 
   return entity;
 }
 
-ECS.EntityManager.prototype.findByComponent = function(Component) {
+ECS.EntityManager.prototype.findByComponent = function(TComponent) {
   var matching = [];
   for (var i = 0; i < this._entities.length; i++) {
-    matching.push(this._entities[i]);
+    if (this._entities[i].hasComponent(TComponent)) {
+      matching.push(this._entities[i]);
+    }
   }
   return matching;
+}
+
+// Convenience function to get player
+ECS.EntityManager.prototype.findPlayer = function() {
+  return this.findByComponent(Component.Player)[0];
 }
