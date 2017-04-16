@@ -18,6 +18,7 @@ var Game = {
     // of vipers.
     var SpriteComponent = Component.PhaserSprite.bind(null, 0, 0, 'skiff');
     manager.addComponent(skiffEntity, SpriteComponent);
+    manager.addComponent(skiffEntity, Component.Position.bind(null, 0, 0));
   },
 
   update: function () {
@@ -25,19 +26,23 @@ var Game = {
 
     if (cursors.up.isDown)
     {
-      skiffEntity.phaserSprite.sprite.y -= 5;
+      skiffEntity.position.y -= 1;
+      skiffEntity.phaserSprite.sprite.y = skiffEntity.position.y * 30;
     }
     else if (cursors.right.isDown)
     {
-      skiffEntity.phaserSprite.sprite.x += 5;
+      skiffEntity.position.x += 1;
+      skiffEntity.phaserSprite.sprite.x = skiffEntity.position.x * 30;
     }
     else if (cursors.down.isDown)
     {
-      skiffEntity.phaserSprite.sprite.y += 5;
+      skiffEntity.position.y += 1;
+      skiffEntity.phaserSprite.sprite.y = skiffEntity.position.y * 30;
     }
     else if (cursors.left.isDown)
     {
-      skiffEntity.phaserSprite.sprite.x -= 5;
+      skiffEntity.position.x -= 1;
+      skiffEntity.phaserSprite.sprite.x = skiffEntity.position.x * 30;
     }
   },
 
