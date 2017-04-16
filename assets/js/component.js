@@ -17,6 +17,12 @@ var Component = {
     this.sprite.height = 30;
   },
 
+  Actor : function Actor (baseSpeed) {
+    this.baseSpeed = baseSpeed;
+    this.speed = baseSpeed;
+    this.ttl = baseSpeed;
+  },
+
   Player : function Player () { },
 
   FoeAI : function FoeAI (board, position) {
@@ -49,6 +55,24 @@ Component.Position.prototype.step = function(x, y) {
       this.owner.phaserSprite.sprite.y = this.y * 30;
     }
   }
+}
+
+// Actor
+
+Component.Actor.prototype.isLive = function() {
+  return this.ttl == 0;
+}
+
+Component.Actor.prototype.passTime = function(ticks) {
+  var nextTTL = this.ttl - ticks;
+  if (nextTTL < 0)  {
+    throw new Error('Actor.passTime has passed more time than the TTL of this entity');
+  }
+  this.ttl = nextTTL;
+}
+
+Component.Actor.prototype.endTurn = function() {
+  this.ttl = this.speed;
 }
 
 // FoeAI

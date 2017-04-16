@@ -32,6 +32,7 @@ var Game = {
     // second-nature for lispy folks but javascript's this is apparently a pit
     // of vipers.
     manager.addComponent(skiffEntity, Component.Player);
+    manager.addComponent(skiffEntity, Component.Actor.bind(null, 100));
     manager.addComponent(skiffEntity, Component.Position.bind(null, board, 5, 5));
     var SpriteComponent = Component.PhaserSprite.bind(null,
                                                       skiffEntity.position.x,
@@ -44,6 +45,7 @@ var Game = {
     // second-nature for lispy folks but javascript's this is apparently a pit
     // of vipers.
     manager.addComponent(dreadnought, Component.Position.bind(null, board, 10, 10));
+    manager.addComponent(dreadnought, Component.Actor.bind(null, 200));
     SpriteComponent = Component.PhaserSprite.bind(null,
                                                   dreadnought.position.x,
                                                   dreadnought.position.y,
@@ -52,37 +54,65 @@ var Game = {
     manager.addComponent(dreadnought, Component.FoeAI.bind(null, board, dreadnought.position));
   },
 
-  update: function () {
+  takeInput : function() {
     var cursors = game.input.keyboard.createCursorKeys();
+    var player = manager.findPlayer();
 
-    if (cursors.up.isDown)
-    {
-      var player = manager.findPlayer();
+    if (cursors.up.isDown) {
       player.position.step(0, -1);
-      var foes = manager.findByComponent(Component.FoeAI);
-      foes.forEach(function(entity) { entity.foeAI.pathTowards(player.position.x, player.position.y); })
-    }
-    else if (cursors.right.isDown)
-    {
-      var player = manager.findPlayer();
+      return true;
+    } else if (cursors.right.isDown) {
       player.position.step(1, 0);
-      var foes = manager.findByComponent(Component.FoeAI);
-      foes.forEach(function(entity) { entity.foeAI.pathTowards(player.position.x, player.position.y); })
-    }
-    else if (cursors.down.isDown)
-    {
-      var player = manager.findPlayer();
+      return true;
+    } else if (cursors.down.isDown) {
       player.position.step(0, 1);
-      var foes = manager.findByComponent(Component.FoeAI);
-      foes.forEach(function(entity) { entity.foeAI.pathTowards(player.position.x, player.position.y); })
-    }
-    else if (cursors.left.isDown)
-    {
-      var player = manager.findPlayer();
+      return true;
+    } else if (cursors.left.isDown) {
       player.position.step(-1, 0);
-      var foes = manager.findByComponent(Component.FoeAI);
-      foes.forEach(function(entity) { entity.foeAI.pathTowards(player.position.x, player.position.y); })
+      return true;
+    } else {
+      return false;
     }
   },
+
+  update: function () {
+    Game.runTurn(board, manager);
+  },
+
+  runTurn : function(board, manager) {
+    // Find next active Actor
+    var actors = manager.findByComponent(Component.Actor);
+    var minTTL = 9999;
+    var nextActor = null;
+    var minActor = null;
+    for (var i = 0; i < actors.length; i++) {
+      if (actors[i].actor.ttl == 0) {
+        nextActor = actors[i];
+        break;
+      } else if (actors[i].actor.ttl < minTTL) {
+        minTTL = actors[i].actor.ttl;
+        minActor = actors[i];
+      }
+    }
+
+    // If no active Actors, fast forward
+    if (nextActor == null) {
+      nextActor = minActor;
+      for (var i = 0; i < actors.length; i++) {
+        actors[i].actor.passTime(minTTL);
+      }
+    }
+
+    // Run your action(s) and end turn
+    if (nextActor == manager.findPlayer()) {
+      if (Game.takeInput()) {
+        nextActor.actor.endTurn();
+      }
+    } else if (nextActor.hasComponent(Component.FoeAI)) {
+      var player = manager.findPlayer();
+      nextActor.foeAI.pathTowards(player.position.x, player.position.y);
+      nextActor.actor.endTurn();
+    }
+  }
 
 };
