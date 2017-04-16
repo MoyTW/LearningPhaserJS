@@ -19,6 +19,14 @@ var ECS = {
   }
 }
 
+// Entity
+
+ECS.Entity.prototype.hasComponent = function(Component) {
+  return -1 != this._Components.indexOf(Component);
+}
+
+// EntityManager
+
 ECS.EntityManager.prototype.createEntity = function() {
   var entity = new ECS.Entity();
   this._entities.push(entity);
@@ -42,7 +50,9 @@ ECS.EntityManager.prototype.addComponent = function(entity, Component) {
 
   entity._Components.push(Component);
 
-  entity[ECS.camelCaseFunctionName(Component)] = new Component();
+  var reifiedComponent = new Component();
+  entity[ECS.camelCaseFunctionName(Component)] = reifiedComponent;
+  reifiedComponent.owner = entity;
 
   return entity;
 }

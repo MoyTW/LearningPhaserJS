@@ -45,22 +45,18 @@ var Game = {
     if (cursors.up.isDown)
     {
       skiffEntity.position.step(0, -1);
-      skiffEntity.phaserSprite.sprite.y = skiffEntity.position.y * 30;
     }
     else if (cursors.right.isDown)
     {
       skiffEntity.position.step(1, 0);
-      skiffEntity.phaserSprite.sprite.x = skiffEntity.position.x * 30;
     }
     else if (cursors.down.isDown)
     {
       skiffEntity.position.step(0, 1);
-      skiffEntity.phaserSprite.sprite.y = skiffEntity.position.y * 30;
     }
     else if (cursors.left.isDown)
     {
       skiffEntity.position.step(-1, 0);
-      skiffEntity.phaserSprite.sprite.x = skiffEntity.position.x * 30;
     }
   },
 
