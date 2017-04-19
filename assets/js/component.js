@@ -1,38 +1,15 @@
 "use strict";
 
-// All components are assumed to have an "owner" property, injected when it's
-// added to a class by the manager. I don't know how to properly express that
-// expectation in JS, so I'm putting it in a comment here.
-var Component = {
+var Component = Component || {}
 
-  Position : function Position (board, x, y) {
-    this._board = board;
-    this.x = x;
-    this.y = y;
-  },
-
-  PhaserSprite : function PhaserSprite (x, y, spriteName) {
-    this.sprite = game.add.sprite(x * 30, y * 30, spriteName);
-    this.sprite.width = 30;
-    this.sprite.height = 30;
-  },
-
-  Actor : function Actor (baseSpeed) {
-    this.baseSpeed = baseSpeed;
-    this.speed = baseSpeed;
-    this.ttl = baseSpeed;
-  },
-
-  Player : function Player () { },
-
-  FoeAI : function FoeAI (board, position) {
-    this._board = board;
-    this._position = position;
-  },
-
-}
-
-// Position
+/**********************
+ * Position Component *
+ **********************/
+Component.Position = function Position (board, x, y) {
+  this._board = board;
+  this.x = x;
+  this.y = y;
+};
 
 Component.Position.prototype.step = function(x, y) {
   if (! (-1 <= x <= 1) || ! (-1 <= y <= 1)) {
@@ -57,7 +34,25 @@ Component.Position.prototype.step = function(x, y) {
   }
 }
 
-// Actor
+
+/**************************
+ * PhaserSprite Component *
+ **************************/
+Component.PhaserSprite = function PhaserSprite (x, y, spriteName) {
+  this.sprite = game.add.sprite(x * 30, y * 30, spriteName);
+  this.sprite.width = 30;
+  this.sprite.height = 30;
+};
+
+
+/*******************
+ * Actor Component *
+ *******************/
+Component.Actor = function Actor (baseSpeed) {
+  this.baseSpeed = baseSpeed;
+  this.speed = baseSpeed;
+  this.ttl = baseSpeed;
+};
 
 Component.Actor.prototype.isLive = function() {
   return this.ttl == 0;
@@ -75,7 +70,20 @@ Component.Actor.prototype.endTurn = function() {
   this.ttl = this.speed;
 }
 
-// FoeAI
+
+/********************
+ * Player Component *
+ ********************/
+Component.Player = function Player () { },
+
+
+/*******************
+ * FoeAI Component *
+ *******************/
+Component.FoeAI = function FoeAI (board, position) {
+  this._board = board;
+  this._position = position;
+};
 
 Component.FoeAI.prototype.buildPathTowards = function(tX, tY) {
   // I am really confused by *why* "this" works like it does, because it
