@@ -70,18 +70,18 @@ Pattern.Path = {
 }
 
 /******************
- * LineCalculator *
+ * LinePath *
  ******************/
-Pattern.LineCalculator = Object.create( Pattern.Path );
+Pattern.LinePath = Object.create( Pattern.Path );
 
 // I can work with constructor functions. I know how to do that.
-Pattern.LineCalculator.Create = function(x0, y0, x1, y1) {
-  var o = Object.create( Pattern.LineCalculator );
-  o.initLineCalculator(x0, y0, x1, y1);
+Pattern.LinePath.Create = function(x0, y0, x1, y1) {
+  var o = Object.create( Pattern.LinePath );
+  o.initLinePath(x0, y0, x1, y1);
   return o;
 }
 
-Pattern.LineCalculator.initLineCalculator = function (x0, y0, x1, y1) {
+Pattern.LinePath.initLinePath = function (x0, y0, x1, y1) {
   this.initPath(x0, y0, this.calcStep);
   this.x0 = x0;
   this.y0 = y0;
@@ -110,7 +110,7 @@ Pattern.LineCalculator.initLineCalculator = function (x0, y0, x1, y1) {
   }
 }
 
-Pattern.LineCalculator.calcStep = function () {
+Pattern.LinePath.calcStep = function () {
   var lastCalculatedPos = this._path[this._path.length - 1]
   var lastCalculatedX = lastCalculatedPos[0];
   var lastCalculatedY = lastCalculatedPos[1];
