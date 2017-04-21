@@ -1,9 +1,9 @@
 "use strict";
 
-var board;
-var manager = new ECS.EntityManager();
-
 var Game = {
+
+  board : null,
+  manager : null,
 
   preload : function() {
     game.load.image('white_square', './assets/images/white_square.png');
@@ -15,11 +15,11 @@ var Game = {
     menu.width = 650;
     menu.height = 400;
 
-    board = new Level.Board(15, 15);
+    this.board = new Level.Board(15, 15);
     // Phaser has a concept of tilesets, which we will want to use eventually!
-    for (var x = 0; x < board.width; x++) {
-      for (var y = 0; y < board.height; y++) {
-        if (!board.isPassable(x, y)) {
+    for (var x = 0; x < this.board.width; x++) {
+      for (var y = 0; y < this.board.height; y++) {
+        if (!this.board.isPassable(x, y)) {
           var sprite = game.add.sprite(x, y, 'white_square');
           sprite.x = x * 30;
           sprite.y = y * 30;
@@ -27,36 +27,38 @@ var Game = {
       }
     }
 
-    var skiffEntity = manager.createEntity();
+    this.manager = new ECS.EntityManager();
+
+    var skiffEntity = this.manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
     // second-nature for lispy folks but javascript's this is apparently a pit
     // of vipers.
-    manager.addComponent(skiffEntity, Component.Player);
-    manager.addComponent(skiffEntity, Component.Actor.bind(null, 100));
-    manager.addComponent(skiffEntity, Component.Position.bind(null, board, 5, 5));
+    this.manager.addComponent(skiffEntity, Component.Player);
+    this.manager.addComponent(skiffEntity, Component.Actor.bind(null, 100));
+    this.manager.addComponent(skiffEntity, Component.Position.bind(null, this.board, 5, 5));
     var SpriteComponent = Component.PhaserSprite.bind(null,
                                                       skiffEntity.position.x,
                                                       skiffEntity.position.y,
                                                       'skiff');
-    manager.addComponent(skiffEntity, SpriteComponent);
+    this.manager.addComponent(skiffEntity, SpriteComponent);
 
-    var dreadnought = manager.createEntity();
+    var dreadnought = this.manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
     // second-nature for lispy folks but javascript's this is apparently a pit
     // of vipers.
-    manager.addComponent(dreadnought, Component.Position.bind(null, board, 10, 10));
-    manager.addComponent(dreadnought, Component.Actor.bind(null, 200));
+    this.manager.addComponent(dreadnought, Component.Position.bind(null, this.board, 10, 10));
+    this.manager.addComponent(dreadnought, Component.Actor.bind(null, 200));
     SpriteComponent = Component.PhaserSprite.bind(null,
                                                   dreadnought.position.x,
                                                   dreadnought.position.y,
                                                   'dreadnought');
-    manager.addComponent(dreadnought, SpriteComponent);
-    manager.addComponent(dreadnought, Component.FoeAI.bind(null, board, dreadnought.position));
+    this.manager.addComponent(dreadnought, SpriteComponent);
+    this.manager.addComponent(dreadnought, Component.FoeAI.bind(null, this.board, dreadnought.position));
   },
 
   takeInput : function() {
     var cursors = game.input.keyboard.createCursorKeys();
-    var player = manager.findPlayer();
+    var player = this.manager.findPlayer();
 
     if (cursors.up.isDown) {
       player.position.step(0, -1);
@@ -76,7 +78,7 @@ var Game = {
   },
 
   update: function () {
-    Game.runTurn(board, manager);
+    Game.runTurn(this.board, this.manager);
   },
 
   runTurn : function(board, manager) {
