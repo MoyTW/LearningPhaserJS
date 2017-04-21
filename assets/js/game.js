@@ -53,7 +53,7 @@ var Game = {
                                                   dreadnought.position.y,
                                                   'dreadnought');
     this.manager.addComponent(dreadnought, SpriteComponent);
-    this.manager.addComponent(dreadnought, Component.FoeAI.bind(null, this.board, dreadnought.position));
+    this.manager.addComponent(dreadnought, Component.FoeAI);
   },
 
   takeInput : function() {
@@ -111,8 +111,7 @@ var Game = {
         nextActor.actor.endTurn();
       }
     } else if (nextActor.hasComponent(Component.FoeAI)) {
-      var player = manager.findPlayer();
-      nextActor.foeAI.pathTowards(player.position.x, player.position.y);
+      nextActor.foeAI.takeTurn(board, manager);
       nextActor.actor.endTurn();
     }
   }

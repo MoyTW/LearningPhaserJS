@@ -80,33 +80,33 @@ Component.Player = function Player () { },
 /*******************
  * FoeAI Component *
  *******************/
-Component.FoeAI = function FoeAI (board, position) {
-  this._board = board;
-  this._position = position;
-};
+Component.FoeAI = function FoeAI () { };
 
-Component.FoeAI.prototype.buildPathTowards = function(tX, tY) {
-  // I am really confused by *why* "this" works like it does, because it
-  // seems...well, unusual? in its semantics.
+Component.FoeAI.prototype.buildPathTowards = function(board, tX, tY) {
+  // I haven't yet read the closures section so I'm not sure if this is how
+  // you're supposed to get the this when you're invoked from the outside call
+  // site to point to the board object, other than this.
   //
   // Note that the current implementation doesn't save the path. Possible area
   // for improvement here.
-  var astar = new ROT.Path.AStar(tX,
-                                 tY,
-                                 function(x, y) {
-                                   return this._board.isPassable(x, y);
-                                 }.bind(this));
+  var astar = new ROT.Path.AStar(tX, tY, board.isPassable.bind(board));
   var acc = [];
   var accFn = function(nX, nY) { acc.push([nX, nY]); }
-  astar.compute(this._position.x, this._position.y, accFn);
+  astar.compute(this.owner.position.x, this.owner.position.y, accFn);
 
   return acc;
 }
 
-Component.FoeAI.prototype.pathTowards = function(x, y) {
-  var path = this.buildPathTowards(x, y);
+Component.FoeAI.prototype.pathTowards = function(board, x, y) {
+  var path = this.buildPathTowards(board, x, y);
   if (path.length > 1) {
     var next = path[1];
-    this._position.step(next[0] - this._position.x, next[1] - this._position.y);
+    this.owner.position.step(next[0] - this.owner.position.x,
+                             next[1] - this.owner.position.y);
   }
+}
+
+Component.FoeAI.prototype.takeTurn = function(board, entityManager) {
+  var player = entityManager.findPlayer();
+  this.pathTowards(board, player.position.x, player.position.y);
 }
