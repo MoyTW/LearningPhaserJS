@@ -31,6 +31,10 @@ Component.Position.prototype.step = function(x, y) {
       this.owner.phaserSprite.sprite.x = this.x * 30;
       this.owner.phaserSprite.sprite.y = this.y * 30;
     }
+
+    return true;
+  } else {
+    return false;
   }
 }
 
@@ -48,10 +52,10 @@ Component.PhaserSprite = function PhaserSprite (x, y, spriteName) {
 /*******************
  * Actor Component *
  *******************/
-Component.Actor = function Actor (baseSpeed) {
+Component.Actor = function Actor (baseSpeed, ttl) {
   this.baseSpeed = baseSpeed;
   this.speed = baseSpeed;
-  this.ttl = baseSpeed;
+  this.ttl = ttl || baseSpeed;
 };
 
 Component.Actor.prototype.isLive = function() {
@@ -106,7 +110,43 @@ Component.FoeAI.prototype.pathTowards = function(board, x, y) {
   }
 }
 
+Component.FoeAI.prototype.fireProjectile = function(board, entityManager, tX, tY) {
+  var x0 = this.owner.position.x;
+  var y0 = this.owner.position.y;
+
+  var projectile = entityManager.createEntity();
+
+  entityManager.addComponent(projectile, Component.Position.bind(null, board, x0, y0));
+
+  entityManager.addComponent(projectile, Component.Actor.bind(null, 50, 0));
+
+  var sc = Component.PhaserSprite.bind(null, x0, y0, 'dreadnought');
+  entityManager.addComponent(projectile, sc);
+
+  // This is ridiculous.
+  var path = Pattern.LinePath.Create(x0, y0, tX, tY);
+  entityManager.addComponent(projectile, Component.ProjectileAI.bind(null, path));
+}
+
 Component.FoeAI.prototype.takeTurn = function(board, entityManager) {
   var player = entityManager.findPlayer();
   this.pathTowards(board, player.position.x, player.position.y);
+  this.fireProjectile(board,
+                      entityManager,
+                      player.position.x,
+                      player.position.y);
+}
+
+
+/**************************
+ * ProjectileAI Component *
+ **************************/
+Component.ProjectileAI = function ProjectileAI (path) {
+  this._path = path;
+};
+
+Component.ProjectileAI.prototype.takeTurn = function () {
+  var next = this._path.step();
+  console.log(next);
+  this.owner.position.step(next[0], next[1]);
 }
