@@ -48,6 +48,10 @@ Component.PhaserSprite = function PhaserSprite (x, y, spriteName) {
   this.sprite.height = 30;
 };
 
+Component.PhaserSprite.prototype.cleanup = function () {
+  this.sprite.destroy();
+}
+
 
 /*******************
  * Actor Component *
@@ -145,8 +149,10 @@ Component.ProjectileAI = function ProjectileAI (path) {
   this._path = path;
 };
 
-Component.ProjectileAI.prototype.takeTurn = function () {
+Component.ProjectileAI.prototype.takeTurn = function (entityManager) {
   var next = this._path.step();
-  console.log(next);
-  this.owner.position.step(next[0], next[1]);
+  var moved = this.owner.position.step(next[0], next[1]);
+  if (!moved) {
+    entityManager.removeEntity(this.owner);
+  }
 }

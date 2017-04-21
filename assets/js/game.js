@@ -114,7 +114,7 @@ var Game = {
       nextActor.foeAI.takeTurn(board, manager);
       nextActor.actor.endTurn();
     } else if (nextActor.hasComponent(Component.ProjectileAI)) {
-      nextActor.projectileAI.takeTurn();
+      nextActor.projectileAI.takeTurn(manager);
       nextActor.actor.endTurn();
     }
   }

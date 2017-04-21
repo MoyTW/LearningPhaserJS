@@ -40,6 +40,13 @@ ECS.EntityManager.prototype.removeEntity = function(entity) {
   } else {
     throw new Error('Tried to remove entity not in list');
   }
+
+  var c;
+  for (c of Object.keys(entity)) {
+    if(!!entity[c].cleanup) {
+      entity[c].cleanup();
+    }
+  }
 }
 
 ECS.EntityManager.prototype.addComponent = function(entity, TComponent) {
@@ -59,7 +66,9 @@ ECS.EntityManager.prototype.removeComponent = function(entity, TComponent) {
     throw new Error('You cannot remove a component that the entity does not have');
   }
 
-  delete entity[ECS.camelCaseFunctionName(TComponent)];
+  var name = ECS.camelCaseFunctionName(TComponent);
+  if(!!entity[name].cleanup) { entity[name].cleanup(); }
+  delete entity[name];
 
   return entity;
 }
