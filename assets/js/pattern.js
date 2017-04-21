@@ -100,7 +100,7 @@ Pattern.LinePath.initLinePath = function (x0, y0, x1, y1) {
   if (y1 - y0 > 0) {
     this.yErr = 1;
   } else {
-    this.yErr = 0;
+    this.yErr = -1;
   }
 
   if (x1 - x0 > 0) {
