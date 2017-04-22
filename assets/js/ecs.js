@@ -34,9 +34,12 @@ ECS.EntityManager = {};
 // Bypassing 'init' since we're not doing a prototype chain
 ECS.EntityManager.Create = function() {
   var em = Object.create( ECS.EntityManager );
+
   em._entities = [];
+  em._tags = {};
+
   return em;
-},
+}
 
 ECS.EntityManager.createEntity = function() {
   var entity = ECS.Entity.Create();
@@ -93,6 +96,38 @@ ECS.EntityManager.findByComponent = function(TComponent) {
     }
   }
   return matching;
+}
+
+ECS.EntityManager.addTag = function (entity, tag) {
+  var matchingEntities = this._tags[tag];
+
+  // Nifty, didn't know assignment worked like this.
+  if (!matchingEntities) matchingEntities = this._tags[tag] = new Set();
+
+  matchingEntities.add(entity);
+}
+
+ECS.EntityManager.removeTag = function (entity, tag) {
+  if (this._tags[tag]) {
+    var entities = this._tags[tag];
+    entities.delete(entity);
+    if (entities.size == 0) {
+      delete this._tags[tag];
+    }
+  }
+}
+
+ECS.EntityManager.replaceTag = function (entity, oldTag, newTag) {
+  this.removeTag(entity, oldTag);
+  this.addTag(entity, newTag);
+}
+
+// I definitely am not fond of the way this works. I would prefer if I could
+// just take a function off an object and pass it around, and there was a 'self'
+// that would allow you to refer back to that object without having to
+// explicitly bind this.
+ECS.EntityManager.replaceTagFn = function() {
+   return this.replaceTag.bind(this);
 }
 
 // Convenience function to get player
