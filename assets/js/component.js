@@ -124,7 +124,7 @@ Component.FoeAI.prototype.fireProjectile = function(board, entityManager, tX, tY
 
   entityManager.addComponent(projectile, Component.Actor.bind(null, 50, 0));
 
-  var sc = Component.PhaserSprite.bind(null, x0, y0, 'dreadnought');
+  var sc = Component.PhaserSprite.bind(null, x0, y0, 'bullet');
   entityManager.addComponent(projectile, sc);
 
   // This is ridiculous.

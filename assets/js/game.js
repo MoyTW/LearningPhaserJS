@@ -9,6 +9,7 @@ var Game = {
     game.load.image('white_square', './assets/images/white_square.png');
     game.load.image('skiff', './assets/images/skiff.png');
     game.load.image('dreadnought', './assets/images/dreadnought.png');
+    game.load.image('bullet', './assets/images/bullet.png');
   },
 
   create: function () {
