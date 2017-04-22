@@ -5,19 +5,23 @@ var Component = Component || {}
 /**********************
  * Position Component *
  **********************/
-Component.Position = function Position (board, x, y) {
+Component.Position = function Position (board, x, y, movedCallback) {
   this._board = board;
   this.x = x;
   this.y = y;
+  this._movedCallback = movedCallback;
 };
 
 Component.Position.prototype.step = function(x, y) {
   if (! (-1 <= x <= 1) || ! (-1 <= y <= 1)) {
     throw new Error('You cannot step more than one square');
   }
-  if (this._board.isPassable(this.x + x, this.y + y)) {
-    this.x += x;
-    this.y += y;
+  var nX = this.x + x;
+  var nY = this.y + y;
+  if (this._board.isPassable(nX, nY)) {
+    this._movedCallback(this.owner, [this.x, this.y], [nX, nY]);
+    this.x = nX;
+    this.y = nY;
 
     // I'd prefer some way of tying the render position to the logical position
     // which is - well, not quite as stateful as this? I might want to go have a
@@ -120,7 +124,9 @@ Component.FoeAI.prototype.fireProjectile = function(board, entityManager, tX, tY
 
   var projectile = entityManager.createEntity();
 
-  entityManager.addComponent(projectile, Component.Position.bind(null, board, x0, y0));
+  var tagFn = entityManager.replaceTagFn();
+  var cp = Component.Position.bind(null, board, x0, y0, tagFn);
+  entityManager.addComponent(projectile, cp);
 
   entityManager.addComponent(projectile, Component.Actor.bind(null, 50, 0));
 

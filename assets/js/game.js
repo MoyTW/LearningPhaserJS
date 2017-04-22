@@ -29,6 +29,7 @@ var Game = {
     }
 
     this.manager = ECS.EntityManager.Create();
+    var tagFn = this.manager.replaceTagFn();
 
     var skiffEntity = this.manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
@@ -36,7 +37,8 @@ var Game = {
     // of vipers.
     this.manager.addComponent(skiffEntity, Component.Player);
     this.manager.addComponent(skiffEntity, Component.Actor.bind(null, 100));
-    this.manager.addComponent(skiffEntity, Component.Position.bind(null, this.board, 5, 5));
+    var cp = Component.Position.bind(null, this.board, 5, 5, tagFn);
+    this.manager.addComponent(skiffEntity, cp);
     var SpriteComponent = Component.PhaserSprite.bind(null,
                                                       skiffEntity.position.x,
                                                       skiffEntity.position.y,
@@ -47,7 +49,8 @@ var Game = {
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
     // second-nature for lispy folks but javascript's this is apparently a pit
     // of vipers.
-    this.manager.addComponent(dreadnought, Component.Position.bind(null, this.board, 10, 10));
+    cp = Component.Position.bind(null, this.board, 10, 10, tagFn);
+    this.manager.addComponent(dreadnought, cp);
     this.manager.addComponent(dreadnought, Component.Actor.bind(null, 200));
     SpriteComponent = Component.PhaserSprite.bind(null,
                                                   dreadnought.position.x,
