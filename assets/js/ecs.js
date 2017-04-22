@@ -1,38 +1,50 @@
 "use strict";
 
-var ECS = {
-
-  nextID : 0,
-
-  Entity : function() {
-    this.id = ECS.nextID++;
-  },
-
-  EntityManager : function() {
-    this._entities = [];
-  },
-
-  camelCaseFunctionName : function(f) {
-    var fname = f.name.replace(/^bound /, '')
-    return fname.charAt(0).toLowerCase() + fname.slice(1);
-  }
+var ECS = ECS || {
+  nextID : 0
 }
 
-// Entity
+ECS.camelCaseFunctionName = function(f) {
+  var fname = f.name.replace(/^bound /, '')
+  return fname.charAt(0).toLowerCase() + fname.slice(1);
+}
 
-ECS.Entity.prototype.hasComponent = function(TComponent) {
+/**********
+ * Entity *
+ **********/
+ECS.Entity = { };
+
+// Bypassing 'init' since we're not doing a prototype chain
+ECS.Entity.Create = function() {
+  var e = Object.create( ECS.Entity );
+  e.id = ECS.nextID++;
+  return e;
+}
+
+ECS.Entity.hasComponent = function(TComponent) {
   return ECS.camelCaseFunctionName(TComponent) in this;
 }
 
-// EntityManager
 
-ECS.EntityManager.prototype.createEntity = function() {
-  var entity = new ECS.Entity();
+/*****************
+ * EntityManager *
+ *****************/
+ECS.EntityManager = {};
+
+// Bypassing 'init' since we're not doing a prototype chain
+ECS.EntityManager.Create = function() {
+  var em = Object.create( ECS.EntityManager );
+  em._entities = [];
+  return em;
+},
+
+ECS.EntityManager.createEntity = function() {
+  var entity = ECS.Entity.Create();
   this._entities.push(entity);
   return entity;
 }
 
-ECS.EntityManager.prototype.removeEntity = function(entity) {
+ECS.EntityManager.removeEntity = function(entity) {
   var index = this._entities.indexOf(entity);
 
   if (index > -1) {
@@ -49,7 +61,7 @@ ECS.EntityManager.prototype.removeEntity = function(entity) {
   }
 }
 
-ECS.EntityManager.prototype.addComponent = function(entity, TComponent) {
+ECS.EntityManager.addComponent = function(entity, TComponent) {
   if (entity.hasComponent(TComponent)) {
     throw new Error('You cannot attach two of the same component to an entity');
   }
@@ -61,7 +73,7 @@ ECS.EntityManager.prototype.addComponent = function(entity, TComponent) {
   return entity;
 }
 
-ECS.EntityManager.prototype.removeComponent = function(entity, TComponent) {
+ECS.EntityManager.removeComponent = function(entity, TComponent) {
   if (!entity.hasComponent(TComponent)) {
     throw new Error('You cannot remove a component that the entity does not have');
   }
@@ -73,7 +85,7 @@ ECS.EntityManager.prototype.removeComponent = function(entity, TComponent) {
   return entity;
 }
 
-ECS.EntityManager.prototype.findByComponent = function(TComponent) {
+ECS.EntityManager.findByComponent = function(TComponent) {
   var matching = [];
   for (var i = 0; i < this._entities.length; i++) {
     if (this._entities[i].hasComponent(TComponent)) {
@@ -84,6 +96,6 @@ ECS.EntityManager.prototype.findByComponent = function(TComponent) {
 }
 
 // Convenience function to get player
-ECS.EntityManager.prototype.findPlayer = function() {
+ECS.EntityManager.findPlayer = function() {
   return this.findByComponent(Component.Player)[0];
 }

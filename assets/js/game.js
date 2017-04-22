@@ -28,7 +28,7 @@ var Game = {
       }
     }
 
-    this.manager = new ECS.EntityManager();
+    this.manager = ECS.EntityManager.Create();
 
     var skiffEntity = this.manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
