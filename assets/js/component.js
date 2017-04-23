@@ -148,6 +148,8 @@ Component.FoeAI.prototype.fireProjectile = function(board, entityManager, tX, tY
   // This is ridiculous.
   var path = Pattern.LinePath.Create(x0, y0, tX, tY);
   entityManager.addComponent(projectile, Component.ProjectileAI.bind(null, path));
+
+  entityManager.addComponent(projectile, Component.Fighter.bind(null, 1, 0, 1));
 }
 
 Component.FoeAI.prototype.takeTurn = function(board, entityManager) {
@@ -173,4 +175,39 @@ Component.ProjectileAI.prototype.takeTurn = function (entityManager) {
   if (!moved) {
     entityManager.removeEntity(this.owner);
   }
+}
+
+
+/**************************
+ * Fighter Component *
+ **************************/
+Component.Fighter = function Fighter (hp, defense, power) {
+  // Right now, no Attribute-style class to track bonus/malus; later maybe
+  this.baseMaxHP = hp;
+  this.maxHP = hp;
+  this.hp = hp;
+
+  this.baseDefense = defense;
+  this.defense = defense;
+
+   // Power is unused; placeholder
+  this.basePower = power;
+  this.power = power;
+}
+
+Component.Fighter.prototype.takeDamage = function (damage) {
+  this.hp -= damage;
+
+  if (this.hp <= 0) {
+    console.log("TAKE DAMAGE HP LESS THAN ZERO NOT IMPLEMENTED");
+    console.log(this.owner, "HP is less than zero!");
+  }
+}
+
+Component.Fighter.prototype.attack = function (target) {
+  var damage = this.power - target.fighter.defense;
+  if (damage > 0) {
+    target.fighter.takeDamage(damage);
+  }
+  return damage;
 }

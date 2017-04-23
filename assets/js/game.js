@@ -45,6 +45,8 @@ var Game = {
                                                       skiffEntity.position.y,
                                                       'skiff');
     this.manager.addComponent(skiffEntity, SpriteComponent);
+    this.manager.addComponent(skiffEntity,
+                              Component.Fighter.bind(null, 15, 0, 5));
 
     var dreadnought = this.manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
@@ -59,6 +61,8 @@ var Game = {
                                                   'dreadnought');
     this.manager.addComponent(dreadnought, SpriteComponent);
     this.manager.addComponent(dreadnought, Component.FoeAI);
+    this.manager.addComponent(dreadnought,
+                              Component.Fighter.bind(null, 10, 0, 2));
   },
 
   takeInput : function() {
