@@ -16,7 +16,9 @@ var Game = {
     menu.width = 650;
     menu.height = 400;
 
-    this.board = new Level.Board(15, 15);
+    this.manager = ECS.EntityManager.Create();
+
+    this.board = new Level.Board(this.manager, 15, 15);
     // Phaser has a concept of tilesets, which we will want to use eventually!
     for (var x = 0; x < this.board.width; x++) {
       for (var y = 0; y < this.board.height; y++) {
@@ -28,7 +30,6 @@ var Game = {
       }
     }
 
-    this.manager = ECS.EntityManager.Create();
     var tagFn = this.manager.replaceTagFn();
 
     var skiffEntity = this.manager.createEntity();

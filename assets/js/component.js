@@ -5,11 +5,18 @@ var Component = Component || {}
 /**********************
  * Position Component *
  **********************/
-Component.Position = function Position (board, x, y, movedCallback) {
+Component.Position = function Position (board, x, y, movedCallback, blocks_movement) {
   this._board = board;
   this.x = x;
   this.y = y;
   this._movedCallback = movedCallback;
+
+  // Can use assignment in function def in v6, but my browser doesn't support.
+  if (blocks_movement = 'undefined') {
+    this.blocks_movement = true;
+  } else {
+    this.blocks_movement = blocks_movement;
+  }
 };
 
 Component.Position.prototype.step = function(x, y) {
@@ -101,7 +108,12 @@ Component.FoeAI.prototype.buildPathTowards = function(board, tX, tY) {
   //
   // Note that the current implementation doesn't save the path. Possible area
   // for improvement here.
-  var astar = new ROT.Path.AStar(tX, tY, board.isPassable.bind(board));
+  //
+  // Further note that the current implementation does not path around blocking
+  // entities. This is a hack, because the player's a blocking entity, and so if
+  // you pass in isPassable, it makes it impossible to path to the square of the
+  // player.
+  var astar = new ROT.Path.AStar(tX, tY, board.isTerrainPassable.bind(board));
   var acc = [];
   var accFn = function(nX, nY) { acc.push([nX, nY]); }
   astar.compute(this.owner.position.x, this.owner.position.y, accFn);
@@ -125,7 +137,7 @@ Component.FoeAI.prototype.fireProjectile = function(board, entityManager, tX, tY
   var projectile = entityManager.createEntity();
 
   var tagFn = entityManager.replaceTagFn();
-  var cp = Component.Position.bind(null, board, x0, y0, tagFn);
+  var cp = Component.Position.bind(null, board, x0, y0, tagFn, false);
   entityManager.addComponent(projectile, cp);
 
   entityManager.addComponent(projectile, Component.Actor.bind(null, 50, 0));
