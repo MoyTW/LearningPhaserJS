@@ -150,6 +150,8 @@ Component.FoeAI.prototype.fireProjectile = function(board, entityManager, tX, tY
   entityManager.addComponent(projectile, Component.ProjectileAI.bind(null, path));
 
   entityManager.addComponent(projectile, Component.Fighter.bind(null, 1, 0, 1));
+  entityManager.addComponent(projectile,
+                             Component.Destroyable.bind(null, entityManager));
 }
 
 Component.FoeAI.prototype.takeTurn = function(board, entityManager) {
@@ -187,7 +189,7 @@ Component.ProjectileAI.prototype.takeTurn = function (entityManager) {
         }
       }
     }
-    entityManager.removeEntity(this.owner);
+    this.owner.destroyable.notifyDestroyed();
   }
 }
 
@@ -213,8 +215,7 @@ Component.Fighter.prototype.takeDamage = function (damage) {
   this.hp -= damage;
 
   if (this.hp <= 0) {
-    console.log("TAKE DAMAGE HP LESS THAN ZERO NOT IMPLEMENTED");
-    console.log(this.owner, "HP is less than zero!");
+    this.owner.destroyable.notifyDestroyed();
   }
 }
 
@@ -224,4 +225,18 @@ Component.Fighter.prototype.attack = function (target) {
     target.fighter.takeDamage(damage);
   }
   return damage;
+}
+
+
+/**************************
+ * Destroyable Component *
+ **************************/
+Component.Destroyable = function Destroyable (entityManager, onDestroyedCallback) {
+  this._entityManager = entityManager;
+  this.onDestroyedCallback = onDestroyedCallback;
+}
+
+Component.Destroyable.prototype.notifyDestroyed = function () {
+  if (this.onDestroyedCallback) { this.onDestroyedCallback(); }
+  this._entityManager.removeEntity(this.owner);
 }

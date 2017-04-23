@@ -47,6 +47,9 @@ var Game = {
     this.manager.addComponent(skiffEntity, SpriteComponent);
     this.manager.addComponent(skiffEntity,
                               Component.Fighter.bind(null, 15, 0, 5));
+    var onPlayerDestroyed = function () { game.state.start('Menu'); }
+    var cd = Component.Destroyable.bind(null, this.manager,onPlayerDestroyed)
+    this.manager.addComponent(skiffEntity, cd);
 
     var dreadnought = this.manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
@@ -63,6 +66,8 @@ var Game = {
     this.manager.addComponent(dreadnought, Component.FoeAI);
     this.manager.addComponent(dreadnought,
                               Component.Fighter.bind(null, 10, 0, 2));
+    this.manager.addComponent(dreadnought,
+                              Component.Destroyable.bind(null, this.manager));
   },
 
   takeInput : function() {
