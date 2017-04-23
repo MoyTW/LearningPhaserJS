@@ -13,9 +13,6 @@ var Game = {
   },
 
   create: function () {
-    menu.width = 650;
-    menu.height = 400;
-
     this.manager = ECS.EntityManager.Create();
 
     this.board = new Level.Board(this.manager, 15, 15);
@@ -47,7 +44,7 @@ var Game = {
     this.manager.addComponent(skiffEntity, SpriteComponent);
     this.manager.addComponent(skiffEntity,
                               Component.Fighter.bind(null, 15, 0, 5));
-    var onPlayerDestroyed = function () { game.state.start('Menu'); }
+    var onPlayerDestroyed = function () { game.state.start('GameOver'); }
     var cd = Component.Destroyable.bind(null, this.manager,onPlayerDestroyed)
     this.manager.addComponent(skiffEntity, cd);
 
@@ -71,6 +68,8 @@ var Game = {
   },
 
   takeInput : function() {
+    // You don't need to re-create these objects every time, actually! See: Menu
+    // input code.
     var cursors = game.input.keyboard.createCursorKeys();
     var player = this.manager.findPlayer();
 
