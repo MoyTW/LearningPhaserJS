@@ -172,7 +172,21 @@ Component.ProjectileAI = function ProjectileAI (path) {
 Component.ProjectileAI.prototype.takeTurn = function (entityManager) {
   var next = this._path.step();
   var moved = this.owner.position.step(next[0], next[1]);
+  // This is really just UGLY, what with all the 'exists' checking I'm doing
+  // here. I'm somewhat influenced by how common nil punning is in Clojure, so
+  // there might be a cleaner js-style method of doing that kind of logic. Gosh,
+  // I hope there is.
   if (!moved) {
+    var entitiesAtNext = entityManager.findByTag(this._path.currentPosition());
+    if (entitiesAtNext) {
+      for (let entity of entitiesAtNext) {
+        if (!!entity.position && entity.position.blocks_movement &&
+            !!entity.fighter) {
+          this.owner.fighter.attack(entity);
+          break;
+        }
+      }
+    }
     entityManager.removeEntity(this.owner);
   }
 }
