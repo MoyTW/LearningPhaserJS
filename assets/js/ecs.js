@@ -17,7 +17,10 @@ ECS.Entity = { };
 // Bypassing 'init' since we're not doing a prototype chain
 ECS.Entity.Create = function() {
   var e = Object.create( ECS.Entity );
+
   e.id = ECS.nextID++;
+  e._tags = new Set();
+
   return e;
 }
 
@@ -57,6 +60,11 @@ ECS.EntityManager.removeEntity = function(entity) {
   }
 
   var c;
+
+  for (c of entity._tags) {
+    this.removeTag(entity, c);
+  }
+
   for (c of Object.keys(entity)) {
     if(!!entity[c].cleanup) {
       entity[c].cleanup();
@@ -98,6 +106,10 @@ ECS.EntityManager.findByComponent = function(TComponent) {
   return matching;
 }
 
+ECS.EntityManager.findByTag = function (tag) {
+  return this._tags[tag];
+}
+
 ECS.EntityManager.addTag = function (entity, tag) {
   var matchingEntities = this._tags[tag];
 
@@ -105,15 +117,20 @@ ECS.EntityManager.addTag = function (entity, tag) {
   if (!matchingEntities) matchingEntities = this._tags[tag] = new Set();
 
   matchingEntities.add(entity);
+  entity._tags.add(tag);
 }
 
 ECS.EntityManager.removeTag = function (entity, tag) {
   if (this._tags[tag]) {
     var entities = this._tags[tag];
+
     entities.delete(entity);
+    entity._tags.delete(tag);
+
     if (entities.size == 0) {
       delete this._tags[tag];
     }
+
   }
 }
 
