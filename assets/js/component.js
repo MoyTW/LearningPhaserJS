@@ -92,7 +92,37 @@ Component.Actor.prototype.endTurn = function() {
 /********************
  * Player Component *
  ********************/
+// TODO: Move into own file & possibly rename
+var Command = Command || {
+  CommandTypes : Object.freeze({
+    MOVE: 'move'
+  }),
+
+  Command : {},
+
+  CreateCommand : function(commandType) {
+    var cmd = Object.create( Command.Command );
+    cmd.commandType = commandType;
+    return cmd;
+  },
+
+  CreateMoveCommand : function(dx, dy) {
+    var cmd = Command.CreateCommand(Command.CommandTypes.MOVE);
+    cmd.dx = dx;
+    cmd.dy = dy;
+    return cmd;
+  }
+};
+
 Component.Player = function Player () { },
+
+Component.Player.prototype.executeCommand = function(command) {
+  if (command.commandType == Command.CommandTypes.MOVE) {
+    this.owner.position.step(command.dx, command.dy);
+    return true;
+  }
+  return false;
+}
 
 
 /*******************

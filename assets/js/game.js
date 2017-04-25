@@ -72,17 +72,17 @@ var Game = {
     var player = this.manager.findPlayer();
 
     if (cursors.up.isDown) {
-      player.position.step(0, -1);
-      return true;
+      var cmd = Command.CreateMoveCommand(0, -1);
+      return player.player.executeCommand(cmd);
     } else if (cursors.right.isDown) {
-      player.position.step(1, 0);
-      return true;
+      var cmd = Command.CreateMoveCommand(1, 0);
+      return player.player.executeCommand(cmd);
     } else if (cursors.down.isDown) {
-      player.position.step(0, 1);
-      return true;
+      var cmd = Command.CreateMoveCommand(0, 1);
+      return player.player.executeCommand(cmd);
     } else if (cursors.left.isDown) {
-      player.position.step(-1, 0);
-      return true;
+      var cmd = Command.CreateMoveCommand(-1, 0);
+      return player.player.executeCommand(cmd);
     } else {
       return false;
     }
