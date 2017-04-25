@@ -41,6 +41,10 @@ Level.Board.prototype.isTileOccupied = function (x, y) {
   return false;
 }
 
+Level.Board.prototype.tileOccupiers = function (position) {
+  return this._entityManager.findByTag(position) || new Set();
+}
+
 Level.Board.prototype.isTerrainPassable = function (x, y) {
   return (x >= 0 && y >= 0 && x < this.width && y < this.height) &&
     !this._tiles[x][y].blocked;
@@ -48,4 +52,8 @@ Level.Board.prototype.isTerrainPassable = function (x, y) {
 
 Level.Board.prototype.isPassable = function(x, y) {
   return this.isTerrainPassable(x, y) && !this.isTileOccupied(x, y);
+}
+
+Level.Board.prototype.notifyMoved = function(entity, lastPosition, nextPosition) {
+  this._entityManager.replaceTag(entity, lastPosition, nextPosition);
 }

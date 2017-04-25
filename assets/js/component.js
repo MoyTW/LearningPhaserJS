@@ -5,11 +5,10 @@ var Component = Component || {}
 /**********************
  * Position Component *
  **********************/
-Component.Position = function Position (board, x, y, movedCallback, blocks_movement) {
+Component.Position = function Position (board, x, y, blocks_movement) {
   this._board = board;
   this.x = x;
   this.y = y;
-  this._movedCallback = movedCallback;
 
   // Can use assignment in function def in v6, but my browser doesn't support.
   if (blocks_movement = 'undefined') {
@@ -26,7 +25,7 @@ Component.Position.prototype.step = function(x, y) {
   var nX = this.x + x;
   var nY = this.y + y;
   if (this._board.isPassable(nX, nY)) {
-    this._movedCallback(this.owner, [this.x, this.y], [nX, nY]);
+    this._board.notifyMoved(this.owner, [this.x, this.y], [nX, nY]);
     this.x = nX;
     this.y = nY;
 
@@ -171,7 +170,7 @@ Component.ProjectileAI = function ProjectileAI (path) {
   this._path = path;
 };
 
-Component.ProjectileAI.prototype.takeTurn = function (entityManager) {
+Component.ProjectileAI.prototype.takeTurn = function (board) {
   var next = this._path.step();
   var moved = this.owner.position.step(next[0], next[1]);
   // This is really just UGLY, what with all the 'exists' checking I'm doing
@@ -179,14 +178,11 @@ Component.ProjectileAI.prototype.takeTurn = function (entityManager) {
   // there might be a cleaner js-style method of doing that kind of logic. Gosh,
   // I hope there is.
   if (!moved) {
-    var entitiesAtNext = entityManager.findByTag(this._path.currentPosition());
-    if (entitiesAtNext) {
-      for (let entity of entitiesAtNext) {
-        if (!!entity.position && entity.position.blocks_movement &&
-            !!entity.fighter) {
-          this.owner.fighter.attack(entity);
-          break;
-        }
+    for (let entity of board.tileOccupiers(this._path.currentPosition())) {
+      if (!!entity.position && entity.position.blocks_movement &&
+          !!entity.fighter) {
+        this.owner.fighter.attack(entity);
+        break;
       }
     }
     this.owner.destroyable.notifyDestroyed();

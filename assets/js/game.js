@@ -27,15 +27,13 @@ var Game = {
       }
     }
 
-    var tagFn = this.manager.replaceTagFn();
-
     var skiffEntity = this.manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
     // second-nature for lispy folks but javascript's this is apparently a pit
     // of vipers.
     this.manager.addComponent(skiffEntity, Component.Player);
     this.manager.addComponent(skiffEntity, Component.Actor.bind(null, 100));
-    var cp = Component.Position.bind(null, this.board, 5, 5, tagFn);
+    var cp = Component.Position.bind(null, this.board, 5, 5);
     this.manager.addComponent(skiffEntity, cp);
     var SpriteComponent = Component.PhaserSprite.bind(null,
                                                       skiffEntity.position.x,
@@ -52,7 +50,7 @@ var Game = {
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
     // second-nature for lispy folks but javascript's this is apparently a pit
     // of vipers.
-    cp = Component.Position.bind(null, this.board, 10, 10, tagFn);
+    cp = Component.Position.bind(null, this.board, 10, 10);
     this.manager.addComponent(dreadnought, cp);
     this.manager.addComponent(dreadnought, Component.Actor.bind(null, 200));
     SpriteComponent = Component.PhaserSprite.bind(null,
@@ -127,7 +125,7 @@ var Game = {
       nextActor.foeAI.takeTurn(board, manager);
       nextActor.actor.endTurn();
     } else if (nextActor.hasComponent(Component.ProjectileAI)) {
-      nextActor.projectileAI.takeTurn(manager);
+      nextActor.projectileAI.takeTurn(board);
       nextActor.actor.endTurn();
     }
   }
