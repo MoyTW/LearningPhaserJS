@@ -18,6 +18,10 @@ Component.Position = function Position (board, x, y, blocks_movement) {
   }
 };
 
+Component.Position.prototype.asArray = function () {
+  return [this.x, this.y];
+}
+
 Component.Position.prototype.distanceTo = function (entity) {
   return this.distanceTo(entity.position.x, entity.position.y);
 }

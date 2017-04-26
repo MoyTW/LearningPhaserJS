@@ -45,6 +45,49 @@ Level.Board.prototype.tileOccupiers = function (position) {
   return this._entityManager.findByTag(position) || new Set();
 }
 
+// I am not going to lie. As an implementation this is not the prettiest thing
+// it could be, nor is it the most elegant. I mostly copied it from the code I
+// wrote when doing the 7DRL, and that code is...not the best.
+//
+// However, unless it turns out to be a bottleneck, I'll leave it.
+Level.Board.prototype.tilesInRadius = function (position, radius) {
+  var pX = position[0];
+  var pY = position[1];
+  var xMin = pX - radius;
+  var xMax = pX + radius;
+  var yMin = pY - radius;
+  var yMax = pY + radius;
+
+  var tiles = [];
+  for (var x = xMin; x <= xMax; x++) {
+    for (var y = yMin; y <= yMax; y++) {
+      var dx = x - pX;
+      var dy = y - pY;
+      var d = Math.ceil(Math.sqrt(dx * dx + dy * dy));
+      if (!(dx == 0 && dy == 0) && d <= radius) {
+        tiles.push([x, y]);
+      }
+    }
+  }
+
+  return tiles;
+}
+
+Level.Board.prototype.occupiersInRadius = function (position, radius) {
+  var tiles = this.tilesInRadius(position, radius);
+  var entities = new Set();
+
+  var tilePos;
+  var entity;
+  for (var tilePos of tiles) {
+    for (var entity of this.tileOccupiers(tilePos)) {
+      entities.add(entity);
+    }
+  }
+
+  return entities;
+}
+
 Level.Board.prototype.isTerrainPassable = function (x, y) {
   return (x >= 0 && y >= 0 && x < this.width && y < this.height) &&
     !this._tiles[x][y].blocked;
