@@ -18,6 +18,16 @@ Component.Position = function Position (board, x, y, blocks_movement) {
   }
 };
 
+Component.Position.prototype.distanceTo = function (entity) {
+  return this.distanceTo(entity.position.x, entity.position.y);
+}
+
+Component.Position.prototype.distanceTo = function (x, y) {
+  var dx = this.x - x;
+  var dy = this.y - y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
 Component.Position.prototype.step = function(x, y) {
   if (! (-1 <= x <= 1) || ! (-1 <= y <= 1)) {
     throw new Error('You cannot step more than one square');
