@@ -11,7 +11,7 @@ Component.Position = function Position (board, x, y, blocks_movement) {
   this.y = y;
 
   // Can use assignment in function def in v6, but my browser doesn't support.
-  if (blocks_movement = 'undefined') {
+  if (blocks_movement == undefined) {
     this.blocks_movement = true;
   } else {
     this.blocks_movement = blocks_movement;
