@@ -179,8 +179,7 @@ Component.FoeAI.prototype.fireProjectile = function(board, entityManager, tX, tY
 
   var projectile = entityManager.createEntity();
 
-  var tagFn = entityManager.replaceTagFn();
-  var cp = Component.Position.bind(null, board, x0, y0, tagFn, false);
+  var cp = Component.Position.bind(null, board, x0, y0, false);
   entityManager.addComponent(projectile, cp);
 
   entityManager.addComponent(projectile, Component.Actor.bind(null, 50, 0));
