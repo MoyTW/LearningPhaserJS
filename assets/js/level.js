@@ -41,8 +41,22 @@ Level.Board.prototype.isTileOccupied = function (x, y) {
   return false;
 }
 
-Level.Board.prototype.tileOccupiers = function (position) {
-  return this._entityManager.findByTag(position) || new Set();
+Level.Board.prototype.tileOccupiers = function (position, onlyCollidables) {
+  var entities = this._entityManager.findByTag(position);
+  if (entities && onlyCollidables) {
+    // Lord but I *really* wanted to use a filter here, like Clojure has taught
+    // me, but SURPRISE! Javascript only implements it for arrays. No filter for
+    // Sets! Well, I mean, not natively. I'm disappointed by this.
+    var e;
+    for (e of entities) {
+      if (e.hasComponent(Component.Position) && !e.position.blocks_movement) {
+        entities.delete(e);
+      }
+    }
+    return entities;
+  } else {
+    return entities || new Set();
+  }
 }
 
 // I am not going to lie. As an implementation this is not the prettiest thing
@@ -73,14 +87,14 @@ Level.Board.prototype.tilesInRadius = function (position, radius) {
   return tiles;
 }
 
-Level.Board.prototype.occupiersInRadius = function (position, radius) {
+Level.Board.prototype.occupiersInRadius = function (position, radius, onlyCollidables) {
   var tiles = this.tilesInRadius(position, radius);
   var entities = new Set();
 
   var tilePos;
   var entity;
   for (var tilePos of tiles) {
-    for (var entity of this.tileOccupiers(tilePos)) {
+    for (var entity of this.tileOccupiers(tilePos, onlyCollidables)) {
       entities.add(entity);
     }
   }
