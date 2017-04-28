@@ -99,7 +99,7 @@ var Game = {
     var nextActor = null;
     var minActor = null;
     for (var i = 0; i < actors.length; i++) {
-      if (actors[i].actor.ttl == 0) {
+      if (actors[i].actor.ttl == 0 && actors[i].actor.speed == 0) {
         nextActor = actors[i];
         break;
       } else if (actors[i].actor.ttl < minTTL) {
