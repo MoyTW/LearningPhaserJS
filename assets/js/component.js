@@ -120,8 +120,10 @@ var Command = Command || {
     return cmd;
   },
 
-  CreateMoveCommand : function(dx, dy) {
+  CreateMoveCommand : function(board, manager, dx, dy) {
     var cmd = Command.CreateCommand(Command.CommandTypes.MOVE);
+    cmd.board = board;
+    cmd.manager = manager;
     cmd.dx = dx;
     cmd.dy = dy;
     return cmd;
@@ -130,9 +132,44 @@ var Command = Command || {
 
 Component.Player = function Player () { },
 
+Component.Player.prototype.fireProjectile = function(board, entityManager, tX, tY) {
+  var x0 = this.owner.position.x;
+  var y0 = this.owner.position.y;
+
+  var projectile = entityManager.createEntity();
+
+  var cp = Component.Position.bind(null, board, x0, y0, false);
+  entityManager.addComponent(projectile, cp);
+
+  entityManager.addComponent(projectile, Component.Actor.bind(null, 0, 0));
+
+  var sc = Component.PhaserSprite.bind(null, x0, y0, 'bullet');
+  entityManager.addComponent(projectile, sc);
+
+  // This is ridiculous.
+  var path = Pattern.LinePath.Create(x0, y0, tX, tY);
+  entityManager.addComponent(projectile, Component.ProjectileAI.bind(null, path));
+
+  entityManager.addComponent(projectile, Component.Fighter.bind(null, 1, 0, 1));
+  entityManager.addComponent(projectile,
+                             Component.Destroyable.bind(null, entityManager));
+}
+
 Component.Player.prototype.executeCommand = function(command) {
   if (command.commandType == Command.CommandTypes.MOVE) {
+    // Add in an attack here
     this.owner.position.step(command.dx, command.dy);
+
+    var inRadius = command.board.occupiersInRadius(this.owner.position.asArray(), 5, true);
+    if (inRadius.size > 0) {
+      // TODO: Closest enemy in radius
+      //
+      // TODO: This is really, really silly; you're doing a lot of spreading of
+      // sets/packaging sets. Investigate whether or not to use sets; Javascript
+      // does not attempt to hold the same assurances as Clojure.
+      var foe = [...inRadius][0];
+      this.fireProjectile(command.board, command.manager, foe.position.x, foe.position.y);
+    }
     return true;
   }
   return false;

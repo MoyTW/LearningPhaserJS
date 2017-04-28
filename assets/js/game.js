@@ -72,16 +72,16 @@ var Game = {
     var player = this.manager.findPlayer();
 
     if (cursors.up.isDown) {
-      var cmd = Command.CreateMoveCommand(0, -1);
+      var cmd = Command.CreateMoveCommand(this.board, this.manager, 0, -1);
       return player.player.executeCommand(cmd);
     } else if (cursors.right.isDown) {
-      var cmd = Command.CreateMoveCommand(1, 0);
+      var cmd = Command.CreateMoveCommand(this.board, this.manager, 1, 0);
       return player.player.executeCommand(cmd);
     } else if (cursors.down.isDown) {
-      var cmd = Command.CreateMoveCommand(0, 1);
+      var cmd = Command.CreateMoveCommand(this.board, this.manager, 0, 1);
       return player.player.executeCommand(cmd);
     } else if (cursors.left.isDown) {
-      var cmd = Command.CreateMoveCommand(-1, 0);
+      var cmd = Command.CreateMoveCommand(this.board, this.manager, -1, 0);
       return player.player.executeCommand(cmd);
     } else {
       return false;
