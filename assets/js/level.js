@@ -53,7 +53,7 @@ Level.Board.initBoard = function (entityManager, width, height) {
   }
 }
 
-Level.Board.CreateBoard = function (entityManager, width, height) {
+Level.Board.CreateEmptyBoard = function (entityManager, width, height) {
   var o = Object.create( Level.Board );
   o.initBoard(entityManager, width, height);
   return o;

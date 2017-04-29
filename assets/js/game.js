@@ -7,6 +7,7 @@ var Game = {
 
   preload : function() {
     game.load.image('white_square', './assets/images/white_square.png');
+    game.load.image('light_gray_square', './assets/images/light_gray_square.png');
     game.load.image('skiff', './assets/images/skiff.png');
     game.load.image('dreadnought', './assets/images/dreadnought.png');
     game.load.image('bullet', './assets/images/bullet.png');
@@ -15,12 +16,12 @@ var Game = {
   create: function () {
     this.manager = ECS.EntityManager.Create();
 
-    this.board = Level.Board.CreateBoard(this.manager, 15, 15);
+    this.board = Level.Board.CreateEmptyBoard(this.manager, 20, 20);
     // Phaser has a concept of tilesets, which we will want to use eventually!
     for (var x = 0; x < this.board.width; x++) {
       for (var y = 0; y < this.board.height; y++) {
         if (!this.board.isPassable(x, y)) {
-          var sprite = game.add.sprite(x, y, 'white_square');
+          var sprite = game.add.sprite(x, y, 'light_gray_square');
           sprite.x = x * 30;
           sprite.y = y * 30;
         }
