@@ -16,7 +16,7 @@ var Game = {
   create: function () {
     this.manager = ECS.EntityManager.Create();
 
-    this.board = Level.Board.CreateEmptyBoard(this.manager, 20, 20);
+    this.board = Level.Board.CreateEmptyBoard(this.manager, 20, 40);
     // Phaser has a concept of tilesets, which we will want to use eventually!
     for (var x = 0; x < this.board.width; x++) {
       for (var y = 0; y < this.board.height; y++) {
@@ -36,16 +36,20 @@ var Game = {
     this.manager.addComponent(skiffEntity, Component.Actor.bind(null, 100));
     var cp = Component.Position.bind(null, this.board, 5, 5);
     this.manager.addComponent(skiffEntity, cp);
-    var SpriteComponent = Component.PhaserSprite.bind(null,
-                                                      skiffEntity.position.x,
-                                                      skiffEntity.position.y,
-                                                      'skiff');
-    this.manager.addComponent(skiffEntity, SpriteComponent);
+    var cSprite = Component.PhaserSprite.bind(null,
+                                              skiffEntity.position.x,
+                                              skiffEntity.position.y,
+                                              'skiff');
+    this.manager.addComponent(skiffEntity, cSprite);
     this.manager.addComponent(skiffEntity,
                               Component.Fighter.bind(null, 15, 0, 5));
     var onPlayerDestroyed = function () { game.state.start('GameOver'); }
     var cd = Component.Destroyable.bind(null, this.manager,onPlayerDestroyed)
     this.manager.addComponent(skiffEntity, cd);
+
+    // Follow the skiff
+    game.world.setBounds(0, 0, this.board.width * 30, this.board.height * 30);
+    game.camera.follow(skiffEntity.phaserSprite.sprite, Phaser.Camera.FOLLOW_LOCKON);
 
     var dreadnought = this.manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
@@ -54,11 +58,11 @@ var Game = {
     cp = Component.Position.bind(null, this.board, 10, 10);
     this.manager.addComponent(dreadnought, cp);
     this.manager.addComponent(dreadnought, Component.Actor.bind(null, 200));
-    SpriteComponent = Component.PhaserSprite.bind(null,
-                                                  dreadnought.position.x,
-                                                  dreadnought.position.y,
-                                                  'dreadnought');
-    this.manager.addComponent(dreadnought, SpriteComponent);
+    cSprite = Component.PhaserSprite.bind(null,
+                                          dreadnought.position.x,
+                                          dreadnought.position.y,
+                                          'dreadnought');
+    this.manager.addComponent(dreadnought, cSprite);
     this.manager.addComponent(dreadnought, Component.FoeAI);
     this.manager.addComponent(dreadnought,
                               Component.Fighter.bind(null, 10, 0, 2));
