@@ -15,7 +15,7 @@ var Game = {
   create: function () {
     this.manager = ECS.EntityManager.Create();
 
-    this.board = new Level.Board(this.manager, 15, 15);
+    this.board = Level.Board.CreateBoard(this.manager, 15, 15);
     // Phaser has a concept of tilesets, which we will want to use eventually!
     for (var x = 0; x < this.board.width; x++) {
       for (var y = 0; y < this.board.height; y++) {
