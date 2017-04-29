@@ -1,9 +1,9 @@
 "use strict";
 
 var Level = {
-  Tile : function Tile (blocked, blocks_sight) {
+  Tile : function Tile (blocked, blocksSight) {
     this.blocked = blocked;
-    this.blocks_sight = blocks_sight;
+    this.blocksSight = blocksSight;
   },
 
   Board : function Board (entityManager, width, height) {
@@ -33,7 +33,7 @@ Level.Board.prototype.isTileOccupied = function (x, y) {
   if (occupiers) {
     var o;
     for (o of occupiers) {
-      if (o.hasComponent(Component.Position) && o.position.blocks_movement) {
+      if (o.hasComponent(Component.Position) && o.position.blocksMovement) {
         return true;
       }
     }
@@ -49,7 +49,7 @@ Level.Board.prototype.tileOccupiers = function (position, onlyCollidables) {
     // Sets! Well, I mean, not natively. I'm disappointed by this.
     var e;
     for (e of entities) {
-      if (e.hasComponent(Component.Position) && !e.position.blocks_movement) {
+      if (e.hasComponent(Component.Position) && !e.position.blocksMovement) {
         entities.delete(e);
       }
     }

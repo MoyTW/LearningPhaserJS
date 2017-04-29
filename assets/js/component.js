@@ -5,16 +5,16 @@ var Component = Component || {}
 /**********************
  * Position Component *
  **********************/
-Component.Position = function Position (board, x, y, blocks_movement) {
+Component.Position = function Position (board, x, y, blocksMovement) {
   this._board = board;
   this.x = x;
   this.y = y;
 
   // Can use assignment in function def in v6, but my browser doesn't support.
-  if (blocks_movement == undefined) {
-    this.blocks_movement = true;
+  if (blocksMovement == undefined) {
+    this.blocksMovement = true;
   } else {
-    this.blocks_movement = blocks_movement;
+    this.blocksMovement = blocksMovement;
   }
 };
 
@@ -259,7 +259,7 @@ Component.ProjectileAI.prototype.takeTurn = function (board) {
   // I hope there is.
   if (!moved) {
     for (let entity of board.tileOccupiers(this._path.currentPosition())) {
-      if (!!entity.position && entity.position.blocks_movement &&
+      if (!!entity.position && entity.position.blocksMovement &&
           !!entity.fighter) {
         this.owner.fighter.attack(entity);
         break;
