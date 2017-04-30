@@ -8,8 +8,8 @@ var Menu = {
 
   create : function () {
     var menu = this.add.button(0, 0, 'menu', this.startGame, this);
-    menu.width = 650;
-    menu.height = 400;
+    menu.width = 600;
+    menu.height = 450;
 
     // The version of Phaser I'm using doesn't have addKeys!?!?!?
     this.spaceKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
