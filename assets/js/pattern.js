@@ -29,6 +29,16 @@ Pattern.Path = {
     return this._path[this._currentStep];
   },
 
+  nextPosition : function () {
+    var p = this._path[this._currentStep + 1];
+    if (p) {
+      return p;
+    } else {
+      this.calcSteps(1);
+      return this._path[this._currentStep + 1];
+    }
+  },
+
   lastPosition : function () {
     return this._path[this._currentStep - 1];
   },

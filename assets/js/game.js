@@ -4,6 +4,7 @@ var Game = {
 
   board : null,
   manager : null,
+  drewPaths : false,
 
   preload : function() {
     game.load.image('white_square', './assets/images/white_square.png');
@@ -14,6 +15,10 @@ var Game = {
   },
 
   create: function () {
+    // So the example shows the 'graphics' object being held in its own var. I
+    // assume this is for if you want to have multiple 'graphics' objects?
+    window.graphics = game.add.graphics(0, 0);
+
     this.manager = ECS.EntityManager.Create();
 
     this.board = Level.Board.CreateEmptyBoard(this.manager, 20, 40);
@@ -123,8 +128,23 @@ var Game = {
 
     // Run your action(s) and end turn
     if (nextActor == manager.findPlayer()) {
+      if (!this.drewPaths) {
+        var pEntity;
+        for (pEntity of this.manager.findByComponent(Component.ProjectileAI)) {
+          var start = pEntity.projectileAI._path.currentPosition();
+          // TODO: Project for TTL of player
+          var projected = pEntity.projectileAI._path.nextPosition();
+
+          window.graphics.lineStyle(10, 0xFF0000, 0.8);
+          window.graphics.moveTo(start[0] * 30 + 15, start[1] * 30 + 15);
+          window.graphics.lineTo(projected[0] * 30 + 15, projected[1] * 30 + 15);
+        }
+        this.drewPaths = true;
+      }
       if (Game.takeInput()) {
         nextActor.actor.endTurn();
+        window.graphics.clear();
+        this.drewPaths = false;
       }
     } else if (nextActor.hasComponent(Component.FoeAI)) {
       nextActor.foeAI.takeTurn(board, manager);
