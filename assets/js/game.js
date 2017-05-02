@@ -132,8 +132,7 @@ var Game = {
         var pEntity;
         for (pEntity of this.manager.findByComponent(Component.ProjectileAI)) {
           var start = pEntity.projectileAI._path.currentPosition();
-          // TODO: Project for TTL of player
-          var projected = pEntity.projectileAI._path.nextPosition();
+          var projected = pEntity.projectileAI.positionAtTicksFromNow(nextActor.actor.speed);
 
           window.graphics.lineStyle(10, 0xFF0000, 0.8);
           window.graphics.moveTo(start[0] * 30 + 15, start[1] * 30 + 15);

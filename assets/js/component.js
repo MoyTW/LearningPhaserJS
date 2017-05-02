@@ -250,6 +250,15 @@ Component.ProjectileAI = function ProjectileAI (path) {
   this._path = path;
 };
 
+Component.ProjectileAI.prototype.positionAtTicksFromNow = function (ticks) {
+  var turns = Math.ceil((ticks - this.owner.actor.ttl) / this.owner.actor.speed);
+  if (turns > 0) {
+    return this._path.project(turns)[turns - 1];
+  } else {
+    return this.currentPosition();
+  }
+};
+
 Component.ProjectileAI.prototype.takeTurn = function (board) {
   var next = this._path.step();
   var moved = this.owner.position.step(next[0], next[1]);
