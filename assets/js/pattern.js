@@ -65,6 +65,8 @@ Pattern.Path = {
     }
   },
 
+  // Returns the path taken over numSteps, starting with the first step past the
+  // current position.
   project : function (numSteps) {
     if (numSteps < 0) {
       throw new Error('Cannot project path by a negative number');
@@ -72,10 +74,11 @@ Pattern.Path = {
 
     var numDesiredSteps = this._currentStep + numSteps;
     if (this._path.length <= numDesiredSteps) {
-      this.calcSteps(numDesiredSteps - this._path.length);
+      this.calcSteps(numDesiredSteps - this._path.length + 1);
     }
 
-    return this._path.slice(this._currentStep, this._currentStep + numSteps);
+    return this._path.slice(this._currentStep + 1,
+                            this._currentStep + numSteps + 1);
   }
 }
 
