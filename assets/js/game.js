@@ -4,7 +4,6 @@ var Game = {
 
   board : null,
   manager : null,
-  drewPaths : false,
 
   preload : function() {
     game.load.image('white_square', './assets/images/white_square.png');
@@ -102,9 +101,7 @@ var Game = {
     Game.runTurn(this.board, this.manager);
   },
 
-  runTurn : function(board, manager) {
-    // Find next active Actor
-    var actors = manager.findByComponent(Component.Actor);
+  gotoNextActor : function (actors) {
     var minTTL = 9999;
     var nextActor = null;
     var minActor = null;
@@ -126,31 +123,42 @@ var Game = {
       }
     }
 
+    return nextActor;
+  },
+
+  drawProjectilePaths : function (manager) {
+    window.graphics.clear();
+    var pEntity;
+    for (pEntity of manager.findByComponent(Component.ProjectileAI)) {
+      var start = pEntity.projectileAI._path.currentPosition();
+      var player = manager.findPlayer();
+      var projected = pEntity.projectileAI.positionAtTicksFromNow(player.actor.speed);
+
+      window.graphics.lineStyle(10, 0xFF0000, 0.8);
+      window.graphics.moveTo(start[0] * 30 + 15, start[1] * 30 + 15);
+      window.graphics.lineTo(projected[0] * 30 + 15, projected[1] * 30 + 15);
+    }
+    return true;
+  },
+
+  runTurn : function(board, manager) {
+    var actors = manager.findByComponent(Component.Actor);
+    var nextActor = this.gotoNextActor(actors);
+
     // Run your action(s) and end turn
     if (nextActor == manager.findPlayer()) {
-      if (!this.drewPaths) {
-        var pEntity;
-        for (pEntity of this.manager.findByComponent(Component.ProjectileAI)) {
-          var start = pEntity.projectileAI._path.currentPosition();
-          var projected = pEntity.projectileAI.positionAtTicksFromNow(nextActor.actor.speed);
-
-          window.graphics.lineStyle(10, 0xFF0000, 0.8);
-          window.graphics.moveTo(start[0] * 30 + 15, start[1] * 30 + 15);
-          window.graphics.lineTo(projected[0] * 30 + 15, projected[1] * 30 + 15);
-        }
-        this.drewPaths = true;
-      }
       if (Game.takeInput()) {
         nextActor.actor.endTurn();
-        window.graphics.clear();
-        this.drewPaths = false;
+        this.drawProjectilePaths(manager);
       }
     } else if (nextActor.hasComponent(Component.FoeAI)) {
       nextActor.foeAI.takeTurn(board, manager);
       nextActor.actor.endTurn();
+      this.drawProjectilePaths(manager);
     } else if (nextActor.hasComponent(Component.ProjectileAI)) {
       nextActor.projectileAI.takeTurn(board);
       nextActor.actor.endTurn();
+      this.drawProjectilePaths(manager);
     }
   }
 
