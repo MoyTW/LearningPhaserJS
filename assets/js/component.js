@@ -251,11 +251,15 @@ Component.ProjectileAI = function ProjectileAI (path) {
 };
 
 Component.ProjectileAI.prototype.positionAtTicksFromNow = function (ticks) {
-  var turns = Math.ceil((ticks - this.owner.actor.ttl) / this.owner.actor.speed);
+  if (this.owner.actor.speed == 0) {
+    var turns = 20;
+  } else {
+    var turns = Math.ceil((ticks - this.owner.actor.ttl) / this.owner.actor.speed);
+  }
   if (turns > 0) {
     return this._path.project(turns)[turns - 1];
   } else {
-    return this.currentPosition();
+    return this._path.currentPosition();
   }
 };
 
