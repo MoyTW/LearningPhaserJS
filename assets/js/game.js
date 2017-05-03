@@ -13,24 +13,31 @@ var Game = {
     game.load.image('bullet', './assets/images/bullet.png');
   },
 
-  create: function () {
-    // So the example shows the 'graphics' object being held in its own var. I
-    // assume this is for if you want to have multiple 'graphics' objects?
-    window.graphics = game.add.graphics(0, 0);
+  buildNewBoard : function (manager) {
+    var newBoard = Level.Board.CreateEmptyBoard(manager,
+                                                Config.BOARD_WIDTH,
+                                                Config.BOARD_HEIGHT);
 
-    this.manager = ECS.EntityManager.Create();
-
-    this.board = Level.Board.CreateEmptyBoard(this.manager, 20, 40);
-    // Phaser has a concept of tilesets, which we will want to use eventually!
-    for (var x = 0; x < this.board.width; x++) {
-      for (var y = 0; y < this.board.height; y++) {
-        if (!this.board.isPassable(x, y)) {
+    for (var x = 0; x < newBoard.width; x++) {
+      for (var y = 0; y < newBoard.height; y++) {
+        if (!newBoard.isPassable(x, y)) {
           var sprite = game.add.sprite(x, y, 'light_gray_square');
           sprite.x = x * 30;
           sprite.y = y * 30;
         }
       }
     }
+
+    return newBoard;
+  },
+
+  create: function () {
+    // So the example shows the 'graphics' object being held in its own var. I
+    // assume this is for if you want to have multiple 'graphics' objects?
+    window.graphics = game.add.graphics(0, 0);
+
+    this.manager = ECS.EntityManager.Create();
+    this.board = this.buildNewBoard(this.manager, 20, 20);
 
     var skiffEntity = this.manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
