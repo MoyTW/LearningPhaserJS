@@ -16,6 +16,7 @@ var Game = {
     game.load.image('skiff', './assets/images/skiff.png');
     game.load.image('dreadnought', './assets/images/dreadnought.png');
     game.load.image('bullet', './assets/images/bullet.png');
+    game.load.image('satellite', './assets/images/satellite.png');
   },
 
   buildNewBoard : function (manager) {
