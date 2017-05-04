@@ -1,5 +1,10 @@
 "use strict";
 
+// Generates a random int from min to max, inclusive
+function randomInt(seededRand, min, max) {
+  return Math.floor(seededRand() * (max - min + 1)) + min;
+}
+
 var Game = {
 
   board : null,
