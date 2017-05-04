@@ -29,6 +29,35 @@ Level.Tile.CreateTile = function (blocked, blocksSight) {
 }
 
 
+/********
+ * Zone *
+ ********/
+Level.Zone = {};
+
+Level.Zone.initZone = function (x, y, width, height, name) {
+  this.x1 = x;
+  this.y1 = y;
+  this.x2 = x + width;
+  this.y2 = y + height;
+
+  this.width = width;
+  this.height = height;
+
+  this.name = "Zone " + name;
+}
+
+Level.Zone.CreateZone = function (x, y, width, height, name) {
+  var o = Object.create( Level.Zone );
+  o.initZone(x, y, width, height, name);
+  return o;
+}
+
+Level.Zone.intersects = function (otherZone) {
+  return this.x1 <= otherZone.x2 && this.x2 >= otherZone.x1 &&
+    this.y1 <= otherZone.y2 && this.y2 >= otherZone.y1;
+}
+
+
 /*********
  * Board *
  *********/

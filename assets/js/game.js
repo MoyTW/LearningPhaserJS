@@ -9,6 +9,7 @@ var Game = {
 
   board : null,
   manager : null,
+  boardRand : null,
 
   preload : function() {
     game.load.image('white_square', './assets/images/white_square.png');
@@ -19,7 +20,22 @@ var Game = {
     game.load.image('satellite', './assets/images/satellite.png');
   },
 
-  buildNewBoard : function (manager) {
+  createSatellite : function (board, manager, x, y) {
+    var satellite = manager.createEntity();
+
+    var cPosition = Component.Position.bind(null, board, x, y, true);
+    manager.addComponent(satellite, cPosition);
+
+    var cSprite = Component.PhaserSprite.bind(null, x, y, 'satellite');
+    manager.addComponent(satellite, cSprite);
+
+    var cFighter = Component.Fighter.bind(null, 15, 0, 5);
+    manager.addComponent(satellite, cFighter);
+
+    return satellite;
+  },
+
+  buildNewBoard : function (manager, boardRand) {
     var newBoard = Level.Board.CreateEmptyBoard(manager,
                                                 Config.BOARD_WIDTH,
                                                 Config.BOARD_HEIGHT);
@@ -34,16 +50,49 @@ var Game = {
       }
     }
 
+    var zones = [];
+    var zoneGenAttempts = 0;
+    while (zoneGenAttempts < Config.MAX_ZONE_GEN_ATTEMPTS && zones.length < Config.MAX_ZONES) {
+      var width = randomInt(boardRand, Config.ZONE_MIN_SIZE, Config.ZONE_MAX_SIZE);
+      var height = randomInt(boardRand, Config.ZONE_MIN_SIZE, Config.ZONE_MAX_SIZE);
+      var x = randomInt(boardRand, 0, Config.BOARD_WIDTH - width - 1);
+      var y = randomInt(boardRand, 0, Config.BOARD_HEIGHT - height - 1);
+
+      var newZone = Level.Zone.CreateZone(x, y, width, height, zones.length);
+
+      var intersects = false;
+      for (var existingZone of zones) {
+        if (existingZone.intersects(newZone)) {
+          intersects = true;
+          break;
+        }
+      }
+
+      if (!intersects) {
+        zones.push(newZone);
+
+        this.createSatellite(this.board, this.manager, x, y);
+        this.createSatellite(this.board, this.manager, x + width, y);
+        this.createSatellite(this.board, this.manager, x, y + height);
+        this.createSatellite(this.board, this.manager, x + width, y + height);
+      }
+
+      zoneGenAttempts++;
+    }
+
     return newBoard;
   },
 
   create: function () {
+    // Seed the randomizer
+    this.boardRand = new Math.seedrandom('seed');
+
     // So the example shows the 'graphics' object being held in its own var. I
     // assume this is for if you want to have multiple 'graphics' objects?
     window.graphics = game.add.graphics(0, 0);
 
     this.manager = ECS.EntityManager.Create();
-    this.board = this.buildNewBoard(this.manager, 20, 20);
+    this.board = this.buildNewBoard(this.manager, this.boardRand);
 
     var skiffEntity = this.manager.createEntity();
     // Honestly, this is a little silly, isn't it? I mean, I know partials are
