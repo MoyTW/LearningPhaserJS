@@ -81,6 +81,18 @@ ECS.EntityManager.addComponent = function(entity, TComponent) {
   entity[ECS.camelCaseFunctionName(TComponent)] = reifiedComponent;
   reifiedComponent.owner = entity;
 
+  // This is really awkward; the two-stage initialization is not great.
+  // Ideally, we could fully create and initialize the component before we push
+  // it in! Or, alternatively, we could defer the binding out until this stage,
+  // and remove the 'constructor' logic.
+  //
+  // We could put the owner assignment in here, too, which would raise the
+  // 'owner' visibility in lieu of arbitrary adds here (pretending it's Python
+  // heheheh)
+  if (!!reifiedComponent.postAddComponent) {
+    reifiedComponent.postAddComponent();
+  }
+
   return entity;
 }
 

@@ -32,6 +32,9 @@ var Game = {
     var cFighter = Component.Fighter.bind(null, 15, 0, 5);
     manager.addComponent(satellite, cFighter);
 
+    var cDestroyable = Component.Destroyable.bind(null, manager);
+    manager.addComponent(satellite, cDestroyable);
+
     return satellite;
   },
 
@@ -71,10 +74,10 @@ var Game = {
       if (!intersects) {
         zones.push(newZone);
 
-        this.createSatellite(this.board, this.manager, x, y);
-        this.createSatellite(this.board, this.manager, x + width, y);
-        this.createSatellite(this.board, this.manager, x, y + height);
-        this.createSatellite(this.board, this.manager, x + width, y + height);
+        this.createSatellite(newBoard, this.manager, x, y);
+        this.createSatellite(newBoard, this.manager, x + width, y);
+        this.createSatellite(newBoard, this.manager, x, y + height);
+        this.createSatellite(newBoard, this.manager, x + width, y + height);
       }
 
       zoneGenAttempts++;

@@ -18,6 +18,10 @@ Component.Position = function Position (board, x, y, blocksMovement) {
   }
 };
 
+Component.Position.prototype.postAddComponent = function () {
+  this._board.notifyAdded(this.owner, this.asArray());
+}
+
 Component.Position.prototype.asArray = function () {
   return [this.x, this.y];
 }
