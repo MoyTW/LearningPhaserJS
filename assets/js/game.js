@@ -20,6 +20,46 @@ var Game = {
     game.load.image('satellite', './assets/images/satellite.png');
   },
 
+  createPlayer : function (board, manager, x, y) {
+    var player = manager.createEntity();
+
+    manager.addComponent(player, Component.Player);
+
+    manager.addComponent(player, Component.Actor.bind(null, 100));
+
+    manager.addComponent(player, Component.Position.bind(null, board, x, y));
+
+    var cSprite = Component.PhaserSprite.bind(null, x, y, 'skiff');
+    manager.addComponent(player, cSprite);
+
+    manager.addComponent(player, Component.Fighter.bind(null, 15, 0, 5));
+
+    var onPlayerDestroyed = function () { game.state.start('GameOver'); }
+    var cd = Component.Destroyable.bind(null, manager,onPlayerDestroyed)
+    manager.addComponent(player, cd);
+
+    return player;
+  },
+
+  createDreadnought : function (board, manager, x, y) {
+    var created = manager.createEntity();
+
+    manager.addComponent(created, Component.Position.bind(null, board, x, y));
+
+    manager.addComponent(created, Component.Actor.bind(null, 200));
+
+    var cSprite = Component.PhaserSprite.bind(null, x, y, 'dreadnought');
+    manager.addComponent(created, cSprite);
+
+    manager.addComponent(created, Component.FoeAI);
+
+    manager.addComponent(created, Component.Fighter.bind(null, 10, 0, 2));
+
+    manager.addComponent(created, Component.Destroyable.bind(null, manager));
+
+    return created;
+  },
+
   createSatellite : function (board, manager, x, y) {
     var satellite = manager.createEntity();
 
@@ -97,46 +137,13 @@ var Game = {
     this.manager = ECS.EntityManager.Create();
     this.board = this.buildNewBoard(this.manager, this.boardRand);
 
-    var skiffEntity = this.manager.createEntity();
-    // Honestly, this is a little silly, isn't it? I mean, I know partials are
-    // second-nature for lispy folks but javascript's this is apparently a pit
-    // of vipers.
-    this.manager.addComponent(skiffEntity, Component.Player);
-    this.manager.addComponent(skiffEntity, Component.Actor.bind(null, 100));
-    var cp = Component.Position.bind(null, this.board, 5, 5);
-    this.manager.addComponent(skiffEntity, cp);
-    var cSprite = Component.PhaserSprite.bind(null,
-                                              skiffEntity.position.x,
-                                              skiffEntity.position.y,
-                                              'skiff');
-    this.manager.addComponent(skiffEntity, cSprite);
-    this.manager.addComponent(skiffEntity,
-                              Component.Fighter.bind(null, 15, 0, 5));
-    var onPlayerDestroyed = function () { game.state.start('GameOver'); }
-    var cd = Component.Destroyable.bind(null, this.manager,onPlayerDestroyed)
-    this.manager.addComponent(skiffEntity, cd);
+    var skiffEntity = this.createPlayer(this.board, this.manager, 5, 5);
 
     // Follow the skiff
     game.world.setBounds(0, 0, this.board.width * 30, this.board.height * 30);
     game.camera.follow(skiffEntity.phaserSprite.sprite, Phaser.Camera.FOLLOW_LOCKON);
 
-    var dreadnought = this.manager.createEntity();
-    // Honestly, this is a little silly, isn't it? I mean, I know partials are
-    // second-nature for lispy folks but javascript's this is apparently a pit
-    // of vipers.
-    cp = Component.Position.bind(null, this.board, 10, 10);
-    this.manager.addComponent(dreadnought, cp);
-    this.manager.addComponent(dreadnought, Component.Actor.bind(null, 200));
-    cSprite = Component.PhaserSprite.bind(null,
-                                          dreadnought.position.x,
-                                          dreadnought.position.y,
-                                          'dreadnought');
-    this.manager.addComponent(dreadnought, cSprite);
-    this.manager.addComponent(dreadnought, Component.FoeAI);
-    this.manager.addComponent(dreadnought,
-                              Component.Fighter.bind(null, 10, 0, 2));
-    this.manager.addComponent(dreadnought,
-                              Component.Destroyable.bind(null, this.manager));
+    this.createDreadnought(this.board, this.manager, 10, 10);
   },
 
   takeInput : function() {
