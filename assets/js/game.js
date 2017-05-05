@@ -20,64 +20,6 @@ var Game = {
     game.load.image('satellite', './assets/images/satellite.png');
   },
 
-  createPlayer : function (board, manager, x, y) {
-    var player = manager.createEntity();
-
-    manager.addComponent(player, Component.Player);
-
-    manager.addComponent(player, Component.Actor.bind(null, 100));
-
-    manager.addComponent(player, Component.Position.bind(null, board, x, y));
-
-    var cSprite = Component.PhaserSprite.bind(null, x, y, 'skiff');
-    manager.addComponent(player, cSprite);
-
-    manager.addComponent(player, Component.Fighter.bind(null, 15, 0, 5));
-
-    var onPlayerDestroyed = function () { game.state.start('GameOver'); }
-    var cd = Component.Destroyable.bind(null, manager,onPlayerDestroyed)
-    manager.addComponent(player, cd);
-
-    return player;
-  },
-
-  createDreadnought : function (board, manager, x, y) {
-    var created = manager.createEntity();
-
-    manager.addComponent(created, Component.Position.bind(null, board, x, y));
-
-    manager.addComponent(created, Component.Actor.bind(null, 200));
-
-    var cSprite = Component.PhaserSprite.bind(null, x, y, 'dreadnought');
-    manager.addComponent(created, cSprite);
-
-    manager.addComponent(created, Component.FoeAI);
-
-    manager.addComponent(created, Component.Fighter.bind(null, 10, 0, 2));
-
-    manager.addComponent(created, Component.Destroyable.bind(null, manager));
-
-    return created;
-  },
-
-  createSatellite : function (board, manager, x, y) {
-    var satellite = manager.createEntity();
-
-    var cPosition = Component.Position.bind(null, board, x, y, true);
-    manager.addComponent(satellite, cPosition);
-
-    var cSprite = Component.PhaserSprite.bind(null, x, y, 'satellite');
-    manager.addComponent(satellite, cSprite);
-
-    var cFighter = Component.Fighter.bind(null, 15, 0, 5);
-    manager.addComponent(satellite, cFighter);
-
-    var cDestroyable = Component.Destroyable.bind(null, manager);
-    manager.addComponent(satellite, cDestroyable);
-
-    return satellite;
-  },
-
   buildNewBoard : function (manager, boardRand) {
     var newBoard = Level.Board.CreateEmptyBoard(manager,
                                                 Config.BOARD_WIDTH,
@@ -114,10 +56,10 @@ var Game = {
       if (!intersects) {
         zones.push(newZone);
 
-        this.createSatellite(newBoard, this.manager, x, y);
-        this.createSatellite(newBoard, this.manager, x + width, y);
-        this.createSatellite(newBoard, this.manager, x, y + height);
-        this.createSatellite(newBoard, this.manager, x + width, y + height);
+        EntityBuilder.createSatellite(newBoard, this.manager, x, y);
+        EntityBuilder.createSatellite(newBoard, this.manager, x + width, y);
+        EntityBuilder.createSatellite(newBoard, this.manager, x, y + height);
+        EntityBuilder.createSatellite(newBoard, this.manager, x + width, y + height);
       }
 
       zoneGenAttempts++;
@@ -137,13 +79,13 @@ var Game = {
     this.manager = ECS.EntityManager.Create();
     this.board = this.buildNewBoard(this.manager, this.boardRand);
 
-    var skiffEntity = this.createPlayer(this.board, this.manager, 5, 5);
+    var skiffEntity = EntityBuilder.createPlayer(this.board, this.manager, 5, 5);
 
     // Follow the skiff
     game.world.setBounds(0, 0, this.board.width * 30, this.board.height * 30);
     game.camera.follow(skiffEntity.phaserSprite.sprite, Phaser.Camera.FOLLOW_LOCKON);
 
-    this.createDreadnought(this.board, this.manager, 10, 10);
+    EntityBuilder.createDreadnought(this.board, this.manager, 10, 10);
   },
 
   takeInput : function() {

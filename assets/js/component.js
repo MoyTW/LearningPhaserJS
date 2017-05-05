@@ -2,27 +2,6 @@
 
 var Component = Component || {}
 
-Component.createLineProjectile = function (board, manager, x0, y0, x1, y1, speed) {
-  var projectile = manager.createEntity();
-
-  var cp = Component.Position.bind(null, board, x0, y0, false);
-  manager.addComponent(projectile, cp);
-
-  manager.addComponent(projectile, Component.Actor.bind(null, speed, 0));
-
-  var sc = Component.PhaserSprite.bind(null, x0, y0, 'bullet');
-  manager.addComponent(projectile, sc);
-
-  // This is ridiculous.
-  var path = Pattern.LinePath.Create(x0, y0, x1, y1);
-  manager.addComponent(projectile, Component.ProjectileAI.bind(null, path));
-
-  manager.addComponent(projectile, Component.Fighter.bind(null, 1, 0, 1));
-  manager.addComponent(projectile, Component.Destroyable.bind(null, manager));
-
-  return projectile;
-};
-
 /**********************
  * Position Component *
  **********************/
@@ -158,13 +137,13 @@ var Command = Command || {
 Component.Player = function Player () { },
 
 Component.Player.prototype.fireProjectile = function(board, entityManager, tX, tY) {
-  Component.createLineProjectile(board,
-                                 entityManager,
-                                 this.owner.position.x,
-                                 this.owner.position.y,
-                                 tX,
-                                 tY,
-                                0);
+  EntityBuilder.createLineProjectile(board,
+                                     entityManager,
+                                     this.owner.position.x,
+                                     this.owner.position.y,
+                                     tX,
+                                     tY,
+                                     0);
 }
 
 Component.Player.prototype.executeCommand = function(command) {
@@ -226,13 +205,13 @@ Component.FoeAI.prototype.pathTowards = function(board, x, y) {
 }
 
 Component.FoeAI.prototype.fireProjectile = function(board, entityManager, tX, tY) {
-  Component.createLineProjectile(board,
-                                 entityManager,
-                                 this.owner.position.x,
-                                 this.owner.position.y,
-                                 tX,
-                                 tY,
-                                 50);
+  EntityBuilder.createLineProjectile(board,
+                                     entityManager,
+                                     this.owner.position.x,
+                                     this.owner.position.y,
+                                     tX,
+                                     tY,
+                                     50);
 }
 
 Component.FoeAI.prototype.takeTurn = function(board, entityManager) {
