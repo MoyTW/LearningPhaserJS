@@ -164,14 +164,17 @@ Component.Player.prototype.executeCommand = function(command) {
     // Add in an attack here
     this.owner.position.step(command.dx, command.dy);
 
-    var inRadius = command.board.occupiersInRadius(this.owner.position.asArray(), 5, true);
-    if (inRadius.size > 0) {
+    var inRadius = command.board.occupiersInRadius(this.owner.position.asArray(),
+                                                   5,
+                                                   true);
+    var foesInRadius = [...inRadius].filter(e => e.hasComponent(Component.FoeAI));
+    if (foesInRadius.length > 0) {
       // TODO: Closest enemy in radius
       //
       // TODO: This is really, really silly; you're doing a lot of spreading of
       // sets/packaging sets. Investigate whether or not to use sets; Javascript
       // does not attempt to hold the same assurances as Clojure.
-      var foe = [...inRadius][0];
+      var foe = foesInRadius[0];
       this.fireProjectile(command.board, command.manager, foe.position.x, foe.position.y);
     }
     return true;
