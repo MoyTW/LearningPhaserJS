@@ -136,16 +136,6 @@ var Command = Command || {
 
 Component.Player = function Player () { },
 
-Component.Player.prototype.fireProjectile = function(board, entityManager, tX, tY) {
-  EntityBuilder.createLineProjectile(board,
-                                     entityManager,
-                                     this.owner.position.x,
-                                     this.owner.position.y,
-                                     tX,
-                                     tY,
-                                     0);
-}
-
 Component.Player.prototype.executeCommand = function(command) {
   if (command.commandType == Command.CommandTypes.MOVE) {
     // Add in an attack here
@@ -162,13 +152,30 @@ Component.Player.prototype.executeCommand = function(command) {
       // sets/packaging sets. Investigate whether or not to use sets; Javascript
       // does not attempt to hold the same assurances as Clojure.
       var foe = foesInRadius[0];
-      this.fireProjectile(command.board, command.manager, foe.position.x, foe.position.y);
+      this.owner.weapon.fireProjectile(command.board, command.manager, foe.position.x, foe.position.y);
     }
     return true;
   }
   return false;
 }
 
+
+/********************
+ * Weapon Component *
+ ********************/
+Component.Weapon = function Weapon (projSpeed) {
+  this.projSpeed = projSpeed;
+};
+
+Component.Weapon.prototype.fireProjectile = function(board, entityManager, tX, tY) {
+  EntityBuilder.createLineProjectile(board,
+                                     entityManager,
+                                     this.owner.position.x,
+                                     this.owner.position.y,
+                                     tX,
+                                     tY,
+                                     this.projSpeed);
+}
 
 /*******************
  * FoeAI Component *
@@ -204,23 +211,15 @@ Component.FoeAI.prototype.pathTowards = function(board, x, y) {
   }
 }
 
-Component.FoeAI.prototype.fireProjectile = function(board, entityManager, tX, tY) {
-  EntityBuilder.createLineProjectile(board,
-                                     entityManager,
-                                     this.owner.position.x,
-                                     this.owner.position.y,
-                                     tX,
-                                     tY,
-                                     50);
-}
-
 Component.FoeAI.prototype.takeTurn = function(board, entityManager) {
   var player = entityManager.findPlayer();
   this.pathTowards(board, player.position.x, player.position.y);
-  this.fireProjectile(board,
-                      entityManager,
-                      player.position.x,
-                      player.position.y);
+  if (!!this.owner.weapon) {
+    this.owner.weapon.fireProjectile(board,
+                                     entityManager,
+                                     player.position.x,
+                                     player.position.y);
+    }
 }
 
 

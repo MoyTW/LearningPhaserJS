@@ -16,6 +16,8 @@ EntityBuilder.createPlayer = function (board, manager, x, y) {
 
   manager.addComponent(player, Component.Fighter.bind(null, 15, 0, 5));
 
+  manager.addComponent(player, Component.Weapon.bind(null, 0));
+
   var onPlayerDestroyed = function () { game.state.start('GameOver'); }
   var cd = Component.Destroyable.bind(null, manager,onPlayerDestroyed)
   manager.addComponent(player, cd);
@@ -36,6 +38,8 @@ EntityBuilder.createDreadnought = function (board, manager, x, y) {
   manager.addComponent(created, Component.FoeAI);
 
   manager.addComponent(created, Component.Fighter.bind(null, 10, 0, 2));
+
+  manager.addComponent(created, Component.Weapon.bind(null, 50));
 
   manager.addComponent(created, Component.Destroyable.bind(null, manager));
 
