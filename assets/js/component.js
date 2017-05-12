@@ -160,6 +160,58 @@ Component.Player.prototype.executeCommand = function(command) {
 }
 
 
+/***********************
+ * Equipment Component *
+ ***********************/
+Component.Equipment = function Equipment () {
+  this._equipper = null;
+}
+
+Component.Equipment.prototype.notifyEquipped = function (equipper) {
+  this._equipper = equipper;
+}
+
+Component.Equipment.prototype.notifyUnequipped = function () {
+  this._equipper = null;
+}
+
+Component.Equipment.prototype.getEquipper = function () {
+  return this._equipper;
+}
+
+
+/************************
+ * EquipSpace Component *
+ ************************/
+// Currently, the EquipSpace component has unlimited capacity!
+Component.EquipSpace = function EquipSpace () {
+  this._equipped = [];
+}
+
+Component.EquipSpace.prototype.equip = function (item) {
+  if (!!item.equipment) {
+    this._equipped.push(item);
+    item.equipment.notifyEquipped(this.owner);
+  } else {
+    throw new Error('Cannot equip non-equipment Entity!');
+  }
+}
+
+Component.EquipSpace.prototype.unequip = function (item) {
+  var index = this._equippedItems.indexOf(item);
+
+  if (index > -1) {
+    this._equipped.splice(index, 1);
+    item.equipment.notifyUnequipped();
+  } else {
+    throw new Error('Tried to remove entity not in list');
+  }
+}
+
+Component.EquipSpace.prototype.getEquipped = function () {
+  return this._equipped;
+}
+
 /********************
  * Weapon Component *
  ********************/
@@ -176,6 +228,7 @@ Component.Weapon.prototype.fireProjectile = function(board, entityManager, tX, t
                                      tY,
                                      this.projSpeed);
 }
+
 
 /*******************
  * FoeAI Component *
