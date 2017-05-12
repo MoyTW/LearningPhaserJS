@@ -152,7 +152,15 @@ Component.Player.prototype.executeCommand = function(command) {
       // sets/packaging sets. Investigate whether or not to use sets; Javascript
       // does not attempt to hold the same assurances as Clojure.
       var foe = foesInRadius[0];
-      this.owner.weapon.fireProjectile(command.board, command.manager, foe.position.x, foe.position.y);
+
+      for (var e of this.owner.equipSpace.getEquipped()) {
+        if (!!e.weapon) {
+          e.weapon.fireProjectile(command.board,
+                                  command.manager,
+                                  foe.position.x,
+                                  foe.position.y);
+        }
+      }
     }
     return true;
   }
@@ -212,6 +220,7 @@ Component.EquipSpace.prototype.getEquipped = function () {
   return this._equipped;
 }
 
+
 /********************
  * Weapon Component *
  ********************/
@@ -222,8 +231,8 @@ Component.Weapon = function Weapon (projSpeed) {
 Component.Weapon.prototype.fireProjectile = function(board, entityManager, tX, tY) {
   EntityBuilder.createLineProjectile(board,
                                      entityManager,
-                                     this.owner.position.x,
-                                     this.owner.position.y,
+                                     this.owner.equipment.getEquipper().position.x,
+                                     this.owner.equipment.getEquipper().position.y,
                                      tX,
                                      tY,
                                      this.projSpeed);
@@ -267,12 +276,16 @@ Component.FoeAI.prototype.pathTowards = function(board, x, y) {
 Component.FoeAI.prototype.takeTurn = function(board, entityManager) {
   var player = entityManager.findPlayer();
   this.pathTowards(board, player.position.x, player.position.y);
-  if (!!this.owner.weapon) {
-    this.owner.weapon.fireProjectile(board,
-                                     entityManager,
-                                     player.position.x,
-                                     player.position.y);
+  if (!!this.owner.equipSpace) {
+    for (var e of this.owner.equipSpace.getEquipped()) {
+      if (!!e.weapon) {
+        e.weapon.fireProjectile(board,
+                                entityManager,
+                                player.position.x,
+                                player.position.y);
+      }
     }
+  }
 }
 
 
