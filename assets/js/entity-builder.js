@@ -2,11 +2,11 @@
 
 var EntityBuilder = {}
 
-EntityBuilder.createWeaponEntity = function (manager, speed) {
+EntityBuilder.createWeaponEntity = function (manager, speed, cooldown) {
   var e = manager.createEntity();
 
   manager.addComponent(e, Component.Equipment);
-  manager.addComponent(e, Component.Weapon.bind(null, speed));
+  manager.addComponent(e, Component.Weapon.bind(null, speed, cooldown));
 
   return e;
 }
@@ -26,7 +26,7 @@ EntityBuilder.createPlayer = function (board, manager, x, y) {
   manager.addComponent(player, Component.Fighter.bind(null, 15, 0, 5));
 
   manager.addComponent(player, Component.EquipSpace);
-  var weapon = EntityBuilder.createWeaponEntity(manager, 0);
+  var weapon = EntityBuilder.createWeaponEntity(manager, 0, 0);
   player.equipSpace.equip(weapon);
 
   var onPlayerDestroyed = function () { game.state.start('GameOver'); }
@@ -51,7 +51,7 @@ EntityBuilder.createDreadnought = function (board, manager, x, y) {
   manager.addComponent(created, Component.Fighter.bind(null, 10, 0, 2));
 
   manager.addComponent(created, Component.EquipSpace);
-  var weapon = EntityBuilder.createWeaponEntity(manager, 50);
+  var weapon = EntityBuilder.createWeaponEntity(manager, 50, 1);
   created.equipSpace.equip(weapon);
 
   manager.addComponent(created, Component.Destroyable.bind(null, manager));

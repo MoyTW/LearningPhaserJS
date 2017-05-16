@@ -42,10 +42,10 @@ AI.BaseAI.takeTurn = function(owner, board, entityManager) {
   if (!!owner.equipSpace) {
     for (var e of owner.equipSpace.getEquipped()) {
       if (!!e.weapon) {
-        e.weapon.fireProjectile(board,
-                                entityManager,
-                                player.position.x,
-                                player.position.y);
+        e.weapon.tryFire(board,
+                         entityManager,
+                         player.position.x,
+                         player.position.y);
       }
     }
   }

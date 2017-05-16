@@ -155,10 +155,10 @@ Component.Player.prototype.executeCommand = function(command) {
 
       for (var e of this.owner.equipSpace.getEquipped()) {
         if (!!e.weapon) {
-          e.weapon.fireProjectile(command.board,
-                                  command.manager,
-                                  foe.position.x,
-                                  foe.position.y);
+          e.weapon.tryFire(command.board,
+                           command.manager,
+                           foe.position.x,
+                           foe.position.y);
         }
       }
     }
@@ -224,18 +224,26 @@ Component.EquipSpace.prototype.getEquipped = function () {
 /********************
  * Weapon Component *
  ********************/
-Component.Weapon = function Weapon (projSpeed) {
+Component.Weapon = function Weapon (projSpeed, cooldown) {
   this.projSpeed = projSpeed;
+  this.cooldown = cooldown;
+  this.ttl = 0;
 };
 
-Component.Weapon.prototype.fireProjectile = function(board, entityManager, tX, tY) {
-  EntityBuilder.createLineProjectile(board,
-                                     entityManager,
-                                     this.owner.equipment.getEquipper().position.x,
-                                     this.owner.equipment.getEquipper().position.y,
-                                     tX,
-                                     tY,
-                                     this.projSpeed);
+Component.Weapon.prototype.tryFire = function(board, entityManager, tX, tY) {
+  if (this.ttl == 0) {
+    EntityBuilder.createLineProjectile(
+      board,
+      entityManager,
+      this.owner.equipment.getEquipper().position.x,
+      this.owner.equipment.getEquipper().position.y,
+      tX,
+      tY,
+      this.projSpeed);
+    this.ttl = this.cooldown;
+  } else {
+    this.ttl--;
+  }
 }
 
 
