@@ -4,8 +4,15 @@ var AI = {};
 
 AI.BaseAI = {};
 
-AI.BaseAI.Create = function () {
-  return Object.create( AI.BaseAI );
+// That's a heck of a variable name!
+AI.BaseAI.initBaseAI = function (stopApproachDistance) {
+  this.stopApproachDistance = stopApproachDistance;
+}
+
+AI.BaseAI.Create = function (stopApproachDistance) {
+  var o = Object.create( AI.BaseAI );
+  o.initBaseAI(stopApproachDistance);
+  return o;
 }
 
 AI.BaseAI._buildPathTowards = function(owner, board, tX, tY) {
@@ -28,8 +35,7 @@ AI.BaseAI._buildPathTowards = function(owner, board, tX, tY) {
   return acc;
 }
 
-AI.BaseAI._pathTowards = function(owner, board, x, y) {
-  var path = this._buildPathTowards(owner, board, x, y);
+AI.BaseAI._pathTowards = function(owner, path) {
   if (path.length > 1) {
     var next = path[1];
     owner.position.step(next[0] - owner.position.x, next[1] - owner.position.y);
@@ -37,15 +43,19 @@ AI.BaseAI._pathTowards = function(owner, board, x, y) {
 }
 
 AI.BaseAI.takeTurn = function(owner, board, entityManager) {
-  var player = entityManager.findPlayer();
-  this._pathTowards(owner, board, player.position.x, player.position.y);
+  var playerPos = entityManager.findPlayer().position;
+
+  // Movement
+  var path = this._buildPathTowards(owner, board, playerPos.x, playerPos.y);
+  if (path.length > this.stopApproachDistance) {
+    this._pathTowards(owner, path);
+  }
+
+  // Fire All Weapons
   if (!!owner.equipSpace) {
     for (var e of owner.equipSpace.getEquipped()) {
       if (!!e.weapon) {
-        e.weapon.tryFire(board,
-                         entityManager,
-                         player.position.x,
-                         player.position.y);
+        e.weapon.tryFire(board, entityManager, playerPos.x, playerPos.y);
       }
     }
   }

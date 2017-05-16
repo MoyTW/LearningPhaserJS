@@ -46,7 +46,7 @@ EntityBuilder.createDreadnought = function (board, manager, x, y) {
   var cSprite = Component.PhaserSprite.bind(null, x, y, 'dreadnought');
   manager.addComponent(created, cSprite);
 
-  manager.addComponent(created, Component.FoeAI.bind(null, AI.BaseAI.Create()));
+  manager.addComponent(created, Component.FoeAI.bind(null, AI.BaseAI.Create(5)));
 
   manager.addComponent(created, Component.Fighter.bind(null, 10, 0, 2));
 
