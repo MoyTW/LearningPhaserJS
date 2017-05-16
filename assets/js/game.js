@@ -18,6 +18,7 @@ var Game = {
     game.load.image('dreadnought', './assets/images/dreadnought.png');
     game.load.image('bullet', './assets/images/bullet.png');
     game.load.image('satellite', './assets/images/satellite.png');
+    EntityBuilder.loadImages();
   },
 
   buildNewBoard : function (manager, boardRand) {
@@ -85,7 +86,7 @@ var Game = {
     game.world.setBounds(0, 0, this.board.width * 30, this.board.height * 30);
     game.camera.follow(skiffEntity.phaserSprite.sprite, Phaser.Camera.FOLLOW_LOCKON);
 
-    EntityBuilder.createDreadnought(this.board, this.manager, 10, 10);
+    EntityBuilder.createScout(this.board, this.manager, 10, 10);
   },
 
   takeInput : function() {

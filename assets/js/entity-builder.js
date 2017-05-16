@@ -2,6 +2,10 @@
 
 var EntityBuilder = {}
 
+EntityBuilder.loadImages = function () {
+  game.load.image('scout', './assets/images/scout.png');
+}
+
 EntityBuilder.createWeaponEntity = function (manager, speed, cooldown) {
   var e = manager.createEntity();
 
@@ -9,6 +13,29 @@ EntityBuilder.createWeaponEntity = function (manager, speed, cooldown) {
   manager.addComponent(e, Component.Weapon.bind(null, speed, cooldown));
 
   return e;
+}
+
+EntityBuilder.createScout = function (board, manager, x, y) {
+  var created = manager.createEntity();
+
+  manager.addComponent(created, Component.Position.bind(null, board, x, y));
+
+  manager.addComponent(created, Component.Actor.bind(null, 75));
+
+  var cSprite = Component.PhaserSprite.bind(null, x, y, 'scout');
+  manager.addComponent(created, cSprite);
+
+  manager.addComponent(created, Component.FoeAI.bind(null, AI.BaseAI.Create(5)));
+
+  manager.addComponent(created, Component.Fighter.bind(null, 10, 0, 2));
+
+  manager.addComponent(created, Component.EquipSpace);
+  var weapon = EntityBuilder.createWeaponEntity(manager, 60, 1);
+  created.equipSpace.equip(weapon);
+
+  manager.addComponent(created, Component.Destroyable.bind(null, manager));
+
+  return created;
 }
 
 EntityBuilder.createPlayer = function (board, manager, x, y) {
