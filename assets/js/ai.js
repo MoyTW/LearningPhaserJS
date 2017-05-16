@@ -8,7 +8,7 @@ AI.BaseAI.Create = function () {
   return Object.create( AI.BaseAI );
 }
 
-AI.BaseAI.buildPathTowards = function(owner, board, tX, tY) {
+AI.BaseAI._buildPathTowards = function(owner, board, tX, tY) {
   // I haven't yet read the closures section so I'm not sure if this is how
   // you're supposed to get the this when you're invoked from the outside call
   // site to point to the board object, other than this.
@@ -28,8 +28,8 @@ AI.BaseAI.buildPathTowards = function(owner, board, tX, tY) {
   return acc;
 }
 
-AI.BaseAI.pathTowards = function(owner, board, x, y) {
-  var path = this.buildPathTowards(owner, board, x, y);
+AI.BaseAI._pathTowards = function(owner, board, x, y) {
+  var path = this._buildPathTowards(owner, board, x, y);
   if (path.length > 1) {
     var next = path[1];
     owner.position.step(next[0] - owner.position.x, next[1] - owner.position.y);
@@ -38,7 +38,7 @@ AI.BaseAI.pathTowards = function(owner, board, x, y) {
 
 AI.BaseAI.takeTurn = function(owner, board, entityManager) {
   var player = entityManager.findPlayer();
-  this.pathTowards(owner, board, player.position.x, player.position.y);
+  this._pathTowards(owner, board, player.position.x, player.position.y);
   if (!!owner.equipSpace) {
     for (var e of owner.equipSpace.getEquipped()) {
       if (!!e.weapon) {
