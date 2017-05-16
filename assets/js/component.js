@@ -242,50 +242,12 @@ Component.Weapon.prototype.fireProjectile = function(board, entityManager, tX, t
 /*******************
  * FoeAI Component *
  *******************/
-Component.FoeAI = function FoeAI () { };
-
-Component.FoeAI.prototype.buildPathTowards = function(board, tX, tY) {
-  // I haven't yet read the closures section so I'm not sure if this is how
-  // you're supposed to get the this when you're invoked from the outside call
-  // site to point to the board object, other than this.
-  //
-  // Note that the current implementation doesn't save the path. Possible area
-  // for improvement here.
-  //
-  // Further note that the current implementation does not path around blocking
-  // entities. This is a hack, because the player's a blocking entity, and so if
-  // you pass in isPassable, it makes it impossible to path to the square of the
-  // player.
-  var astar = new ROT.Path.AStar(tX, tY, board.isTerrainPassable.bind(board));
-  var acc = [];
-  var accFn = function(nX, nY) { acc.push([nX, nY]); }
-  astar.compute(this.owner.position.x, this.owner.position.y, accFn);
-
-  return acc;
-}
-
-Component.FoeAI.prototype.pathTowards = function(board, x, y) {
-  var path = this.buildPathTowards(board, x, y);
-  if (path.length > 1) {
-    var next = path[1];
-    this.owner.position.step(next[0] - this.owner.position.x,
-                             next[1] - this.owner.position.y);
-  }
-}
+Component.FoeAI = function FoeAI (ai) {
+  this.ai = ai;
+};
 
 Component.FoeAI.prototype.takeTurn = function(board, entityManager) {
-  var player = entityManager.findPlayer();
-  this.pathTowards(board, player.position.x, player.position.y);
-  if (!!this.owner.equipSpace) {
-    for (var e of this.owner.equipSpace.getEquipped()) {
-      if (!!e.weapon) {
-        e.weapon.fireProjectile(board,
-                                entityManager,
-                                player.position.x,
-                                player.position.y);
-      }
-    }
-  }
+  this.ai.takeTurn(this.owner, board, entityManager);
 }
 
 
