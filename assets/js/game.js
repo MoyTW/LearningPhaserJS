@@ -10,6 +10,7 @@ var Game = {
   board : null,
   manager : null,
   boardRand : null,
+  gameRand : null,
 
   preload : function() {
     game.load.image('white_square', './assets/images/white_square.png');
@@ -72,6 +73,7 @@ var Game = {
   create: function () {
     // Seed the randomizer
     this.boardRand = new Math.seedrandom('seed');
+    this.gameRand = new Math.seedrandom('other seed');
 
     // So the example shows the 'graphics' object being held in its own var. I
     // assume this is for if you want to have multiple 'graphics' objects?
@@ -80,13 +82,13 @@ var Game = {
     this.manager = ECS.EntityManager.Create();
     this.board = this.buildNewBoard(this.manager, this.boardRand);
 
-    var skiffEntity = EntityBuilder.createPlayer(this.board, this.manager, 5, 5);
+    var skiffEntity = EntityBuilder.createPlayer(this.board, this.manager, this.gameRand, 5, 5);
 
     // Follow the skiff
     game.world.setBounds(0, 0, this.board.width * 30, this.board.height * 30);
     game.camera.follow(skiffEntity.phaserSprite.sprite, Phaser.Camera.FOLLOW_LOCKON);
 
-    EntityBuilder.createScout(this.board, this.manager, 10, 10);
+    EntityBuilder.createScout(this.board, this.manager, this.gameRand, 10, 10);
   },
 
   takeInput : function() {

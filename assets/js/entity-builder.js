@@ -6,16 +6,16 @@ EntityBuilder.loadImages = function () {
   game.load.image('scout', './assets/images/scout.png');
 }
 
-EntityBuilder.createWeaponEntity = function (manager, speed, cooldown) {
+EntityBuilder.createWeaponEntity = function (manager, gameRand, speed, cooldown, spread, numShots) {
   var e = manager.createEntity();
 
   manager.addComponent(e, Component.Equipment);
-  manager.addComponent(e, Component.Weapon.bind(null, speed, cooldown));
+  manager.addComponent(e, Component.Weapon.bind(null, gameRand, speed, cooldown, spread, numShots));
 
   return e;
 }
 
-EntityBuilder.createScout = function (board, manager, x, y) {
+EntityBuilder.createScout = function (board, manager, gameRand, x, y) {
   var created = manager.createEntity();
 
   manager.addComponent(created, Component.Position.bind(null, board, x, y));
@@ -30,7 +30,7 @@ EntityBuilder.createScout = function (board, manager, x, y) {
   manager.addComponent(created, Component.Fighter.bind(null, 10, 0, 2));
 
   manager.addComponent(created, Component.EquipSpace);
-  var weapon = EntityBuilder.createWeaponEntity(manager, 60, 1);
+  var weapon = EntityBuilder.createWeaponEntity(manager, gameRand, 25, 1, 5, 5);
   created.equipSpace.equip(weapon);
 
   manager.addComponent(created, Component.Destroyable.bind(null, manager));
@@ -38,7 +38,7 @@ EntityBuilder.createScout = function (board, manager, x, y) {
   return created;
 }
 
-EntityBuilder.createPlayer = function (board, manager, x, y) {
+EntityBuilder.createPlayer = function (board, manager, gameRand, x, y) {
   var player = manager.createEntity();
 
   manager.addComponent(player, Component.Player);
@@ -53,7 +53,7 @@ EntityBuilder.createPlayer = function (board, manager, x, y) {
   manager.addComponent(player, Component.Fighter.bind(null, 15, 0, 5));
 
   manager.addComponent(player, Component.EquipSpace);
-  var weapon = EntityBuilder.createWeaponEntity(manager, 0, 0);
+  var weapon = EntityBuilder.createWeaponEntity(manager, gameRand, 0, 0);
   player.equipSpace.equip(weapon);
 
   var onPlayerDestroyed = function () { game.state.start('GameOver'); }
@@ -61,29 +61,6 @@ EntityBuilder.createPlayer = function (board, manager, x, y) {
   manager.addComponent(player, cd);
 
   return player;
-}
-
-EntityBuilder.createDreadnought = function (board, manager, x, y) {
-  var created = manager.createEntity();
-
-  manager.addComponent(created, Component.Position.bind(null, board, x, y));
-
-  manager.addComponent(created, Component.Actor.bind(null, 200));
-
-  var cSprite = Component.PhaserSprite.bind(null, x, y, 'dreadnought');
-  manager.addComponent(created, cSprite);
-
-  manager.addComponent(created, Component.FoeAI.bind(null, AI.BaseAI.Create(5)));
-
-  manager.addComponent(created, Component.Fighter.bind(null, 10, 0, 2));
-
-  manager.addComponent(created, Component.EquipSpace);
-  var weapon = EntityBuilder.createWeaponEntity(manager, 50, 1);
-  created.equipSpace.equip(weapon);
-
-  manager.addComponent(created, Component.Destroyable.bind(null, manager));
-
-  return created;
 }
 
 EntityBuilder.createSatellite = function (board, manager, x, y) {

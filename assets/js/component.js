@@ -229,7 +229,8 @@ Component.EquipSpace.prototype.getEquipped = function () {
  * Weapon Component *
  ********************/
 
-Component.Weapon = function Weapon (projSpeed, cooldown, spread, numShots) {
+Component.Weapon = function Weapon (gameRand, projSpeed, cooldown, spread, numShots) {
+  this.gameRand = gameRand;
   this.projSpeed = projSpeed;
   this.cooldown = cooldown;
   this.spread = (spread == undefined) ? 0 : spread;
@@ -239,14 +240,23 @@ Component.Weapon = function Weapon (projSpeed, cooldown, spread, numShots) {
 };
 
 Component.Weapon.prototype.singleShot = function(board, entityManager, tX, tY) {
+  var dX, dY;
+  if (this.spread > 0) {
+    dX = randomInt(this.gameRand, 0, this.spread * 2) - this.spread;
+    dY = randomInt(this.gameRand, 0, this.spread * 2) - this.spread;
+  } else {
+    dX = 0;
+    dY = 0;
+  }
+
   EntityBuilder.createLineProjectile(
-      board,
-      entityManager,
-      this.owner.equipment.getEquipper().position.x,
-      this.owner.equipment.getEquipper().position.y,
-      tX,
-      tY,
-      this.projSpeed);
+    board,
+    entityManager,
+    this.owner.equipment.getEquipper().position.x,
+    this.owner.equipment.getEquipper().position.y,
+    tX + dX,
+    tY + dY,
+    this.projSpeed);
 }
 
 Component.Weapon.prototype.tryFire = function(board, entityManager, tX, tY) {
