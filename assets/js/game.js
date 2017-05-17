@@ -143,10 +143,14 @@ var Game = {
 
   drawProjectilePaths : function (manager) {
     window.graphics.clear();
-    var pEntity;
-    for (pEntity of manager.findByComponent(Component.ProjectileAI)) {
+    var player = manager.findPlayer();
+
+    if (!player) {
+      return false;
+    }
+
+    for (var pEntity of manager.findByComponent(Component.ProjectileAI)) {
       var start = pEntity.projectileAI._path.currentPosition();
-      var player = manager.findPlayer();
       var projected = pEntity.projectileAI.positionAtTicksFromNow(player.actor.speed);
 
       window.graphics.lineStyle(10, 0xFF0000, 0.8);

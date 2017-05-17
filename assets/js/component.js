@@ -87,7 +87,11 @@ Component.PhaserSprite.prototype.cleanup = function () {
 Component.Actor = function Actor (baseSpeed, ttl) {
   this.baseSpeed = baseSpeed;
   this.speed = baseSpeed;
-  this.ttl = ttl || baseSpeed;
+  if (ttl == undefined) {
+    this.ttl = baseSpeed;
+  } else {
+    this.ttl = ttl;
+  }
 };
 
 Component.Actor.prototype.isLive = function() {
