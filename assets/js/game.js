@@ -115,7 +115,7 @@ var Game = {
   },
 
   update: function () {
-    Game.runTurn(this.board, this.manager);
+    this.runUntilInputRequired(this.board, this.manager);
   },
 
   gotoNextActor : function (actors) {
@@ -162,13 +162,27 @@ var Game = {
     return true;
   },
 
-  runTurn : function(board, manager) {
-    var actors = manager.findByComponent(Component.Actor);
-    var nextActor = this.gotoNextActor(actors);
+  runUntilInputRequired : function (board, manager) {
+    var nextActor;
 
+    // Note how the nextActor is assigned. The nextActor is found and then a
+    // turn is *immediately* taken, so if it does hit the nextActor == player,
+    // that means the player turn is in fact over.
+    //
+    // There *could* be a perf hit from running all the nextActor stuff
+    // constantly but - well, I guess it might eat a little battery? I'll keep
+    // the next actor as a derived property for now.
+    while (nextActor != manager.findPlayer()) {
+      var actors = manager.findByComponent(Component.Actor);
+      nextActor = this.gotoNextActor(actors);
+      this.runTurn(board, manager, nextActor);
+    }
+  },
+
+  runTurn : function(board, manager, nextActor) {
     // Run your action(s) and end turn
     if (nextActor == manager.findPlayer()) {
-      if (Game.takeInput()) {
+      if (this.takeInput()) {
         nextActor.actor.endTurn();
         this.drawProjectilePaths(manager);
       }
