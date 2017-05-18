@@ -1,0 +1,137 @@
+* Original Weapons
+** Small Shotgun
++ HP: 1
++ Defense: 0
++ Power: 1
++ Speed: 25
++ Path: Line
+** Small Gatling
++ HP: 1
++ Defense: 0
++ Power: 2
++ Speed: 50
++ Path: Line
+** Small Cannon
++ HP: 1
++ Defense: 0
++ Power: 5
++ Speed: 50
++ Path: Line
+** Reverser
++ HP: 1
++ Defense: 0
++ Power: 2
++ Speed: 33
++ Path: Reverse (overshoot=4)
+** Railgun
++ HP: 1
++ Defense: 0
++ Power: 15
++ Speed: 20
++ Path: Line
+* Original Enemies
+** Scout
+*** Stats
++ HP: 10
++ Defense: 0
++ Power: 0
++ XP: 30
++ Speed: 75
+*** AI
++ If distance to player >= 5, approach
++ Fire weapons
+*** Weapons
++ Small Shotgun (spread=2, pellets=3)
+** Fighter
+*** Stats
++ HP: 30
++ Defense: 0
++ Power: 0
++ XP: 50
++ Speed: 125
+*** AI
++ Approach
++ Fire Weapons
+*** Weapons
++ Small Gatling x3
+** Gunship
+*** Stats
++ HP: 50
++ Defense: 4
++ Power: 3
++ XP: 100
++ Speed: 100
+*** AI
++ If distance to player >= 5 AND did not move previous turn, approach
++ Every 4th turn, fire cannons
+  - ELSE fire shotgun
+*** Weapons
++ Small Cannon
++ Small Shotgun (spread=5, pellets=5)
+** Frigate
+*** Stats
++ HP: 150
++ Defense: 10
++ Power: 3
++ XP: 200
++ Speed: 250
+*** AI
++ Approach
++ Every 3rd turn, fire reverser and small cannon
+  - ELSE fire cannon, gatling, and shotgun
+*** Weapons
++ Reverser
++ Small Cannon
++ Small Gatling
++ Small Shotgun (pellets=2, spread=3)
+** Destroyer
+*** Stats
++ HP: 200
++ Defense: 15
++ Power: 0
++ XP: 500
++ Speed: 300
+*** AI
++ Approach
++ Every 5th turn, fire Volley and cannon 
+  - ELSE fire small shotgun
+*** Weapons
++ Small Shotgun (Volley) (spread=7, pellets=30)
++ Small Cannon
++ Small Shotgun (spread=1, pellets=2)
+** Cruiser
+*** Stats
++ HP: 300
++ Defense: 10
++ Power: 0
++ XP: 1000
++ Speed: 400
+*** AI
++ If distance to player >=7, approach
++ Attempt to fire railgun
++ If distance to player <= 4, attempt to fire flak
+*** Weapons
++ Railgun
++ Small Shotgun (Flak) (spread=5, pellets=30)
+** Carrier
+*** Stats
++ HP: 300
++ Defense: 10
++ Power: 0
++ XP: 1000
++ Speed: 200
+*** AI
++ Launch Fighter
++ If distance to player <= 4, attempt to fire flak
+*** Weapons
++ Fighter Bay
++ Small Shotgun (Flak) (spread=5, pellets=30)
+** Diplomat
+*** Stats
++ HP: 10
++ Defense: 0
++ Power: 0
++ XP: 30
++ Speed: 75
+*** AI
+*** Weapons
