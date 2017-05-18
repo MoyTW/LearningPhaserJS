@@ -7,12 +7,18 @@ function randomInt(seededRand, min, max) {
 
 var Game = {
 
+  cursors : null,
+
   board : null,
   manager : null,
   boardRand : null,
   gameRand : null,
 
+  lastInput : 0,
+
   preload : function() {
+    this.cursors = game.input.keyboard.createCursorKeys(),
+
     game.load.image('white_square', './assets/images/white_square.png');
     game.load.image('light_gray_square', './assets/images/light_gray_square.png');
     game.load.image('skiff', './assets/images/skiff.png');
@@ -92,21 +98,25 @@ var Game = {
   },
 
   takeInput : function() {
-    // You don't need to re-create these objects every time, actually! See: Menu
-    // input code.
-    var cursors = game.input.keyboard.createCursorKeys();
+    if (game.time.now < this.lastInput + 100) {
+      return false;
+    }
     var player = this.manager.findPlayer();
 
-    if (cursors.up.isDown) {
+    if (this.cursors.up.isDown) {
+      this.lastInput = game.time.now;
       var cmd = Command.CreateMoveCommand(this.board, this.manager, 0, -1);
       return player.player.executeCommand(cmd);
-    } else if (cursors.right.isDown) {
+    } else if (this.cursors.right.isDown) {
+      this.lastInput = game.time.now;
       var cmd = Command.CreateMoveCommand(this.board, this.manager, 1, 0);
       return player.player.executeCommand(cmd);
-    } else if (cursors.down.isDown) {
+    } else if (this.cursors.down.isDown) {
+      this.lastInput = game.time.now;
       var cmd = Command.CreateMoveCommand(this.board, this.manager, 0, 1);
       return player.player.executeCommand(cmd);
-    } else if (cursors.left.isDown) {
+    } else if (this.cursors.left.isDown) {
+      this.lastInput = game.time.now;
       var cmd = Command.CreateMoveCommand(this.board, this.manager, -1, 0);
       return player.player.executeCommand(cmd);
     } else {

@@ -240,6 +240,9 @@ Component.Weapon = function Weapon (gameRand, projSpeed, cooldown, spread, numSh
 };
 
 Component.Weapon.prototype.singleShot = function(board, entityManager, tX, tY) {
+  // TODO: A better spread implementation. This spread can actually cause
+  // enemies to fire BEHIND themselves! That's how it was in the 7DRL, but I
+  // should change that once feature parity is reached.
   var dX, dY;
   if (this.spread > 0) {
     dX = randomInt(this.gameRand, 0, this.spread * 2) - this.spread;
