@@ -9,17 +9,35 @@ EntityBuilder.loadImages = function () {
 /******************************************************************************
  *                                  WEAPONS                                   *
  ******************************************************************************/
-EntityBuilder.createWeaponEntity = function (manager, gameRand, speed, cooldown, spread, numShots) {
+EntityBuilder.Weapons = {
+
+  cuttingLaser : {
+    speed: 0,
+    cooldown: 0,
+    spread: 0,
+    numShots: 1
+  },
+
+  scoutShotgun : {
+    speed: 25,
+    cooldown: 0,
+    spread: 2,
+    numShots: 3
+  }
+}
+
+EntityBuilder.createWeaponEntity = function (manager, gameRand, params) {
   var e = manager.createEntity();
 
   manager.addComponent(e, Component.Equipment);
-  manager.addComponent(e, Component.Weapon.bind(null, gameRand, speed, cooldown, spread, numShots));
+  manager.addComponent(e, Component.Weapon.bind(null,
+                                                gameRand,
+                                                params.speed,
+                                                params.cooldown,
+                                                params.spread,
+                                                params.numShots));
 
   return e;
-}
-
-EntityBuilder.createScoutShotgun = function (manager, gameRand) {
-  return EntityBuilder.createWeaponEntity(manager, gameRand, 25, 0, 2, 3);
 }
 
 
@@ -41,7 +59,7 @@ EntityBuilder.createScout = function (board, manager, gameRand, x, y) {
   manager.addComponent(created, Component.Fighter.bind(null, 10, 0, 2));
 
   manager.addComponent(created, Component.EquipSpace);
-  created.equipSpace.equip(EntityBuilder.createScoutShotgun(manager, gameRand));
+  created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.scoutShotgun));
 
   manager.addComponent(created, Component.Destroyable.bind(null, manager));
 
@@ -63,7 +81,7 @@ EntityBuilder.createPlayer = function (board, manager, gameRand, x, y) {
   manager.addComponent(player, Component.Fighter.bind(null, 15, 0, 5));
 
   manager.addComponent(player, Component.EquipSpace);
-  var weapon = EntityBuilder.createWeaponEntity(manager, gameRand, 0, 0);
+  var weapon = EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.cuttingLaser);
   player.equipSpace.equip(weapon);
 
   var onPlayerDestroyed = function () { game.state.start('GameOver'); }
