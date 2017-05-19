@@ -6,6 +6,9 @@ EntityBuilder.loadImages = function () {
   game.load.image('scout', './assets/images/scout.png');
 }
 
+/******************************************************************************
+ *                                  WEAPONS                                   *
+ ******************************************************************************/
 EntityBuilder.createWeaponEntity = function (manager, gameRand, speed, cooldown, spread, numShots) {
   var e = manager.createEntity();
 
@@ -15,6 +18,14 @@ EntityBuilder.createWeaponEntity = function (manager, gameRand, speed, cooldown,
   return e;
 }
 
+EntityBuilder.createScoutShotgun = function (manager, gameRand) {
+  return EntityBuilder.createWeaponEntity(manager, gameRand, 25, 0, 2, 3);
+}
+
+
+/******************************************************************************
+ *                                   SHIPS                                    *
+ ******************************************************************************/
 EntityBuilder.createScout = function (board, manager, gameRand, x, y) {
   var created = manager.createEntity();
 
@@ -30,8 +41,7 @@ EntityBuilder.createScout = function (board, manager, gameRand, x, y) {
   manager.addComponent(created, Component.Fighter.bind(null, 10, 0, 2));
 
   manager.addComponent(created, Component.EquipSpace);
-  var weapon = EntityBuilder.createWeaponEntity(manager, gameRand, 25, 1, 5, 5);
-  created.equipSpace.equip(weapon);
+  created.equipSpace.equip(EntityBuilder.createScoutShotgun(manager, gameRand));
 
   manager.addComponent(created, Component.Destroyable.bind(null, manager));
 
@@ -63,6 +73,10 @@ EntityBuilder.createPlayer = function (board, manager, gameRand, x, y) {
   return player;
 }
 
+
+/******************************************************************************
+ *                            OTHER MAP ENTITIES                              *
+ ******************************************************************************/
 EntityBuilder.createSatellite = function (board, manager, x, y) {
   var satellite = manager.createEntity();
 
