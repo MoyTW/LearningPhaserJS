@@ -95,6 +95,7 @@ var Game = {
     game.camera.follow(skiffEntity.phaserSprite.sprite, Phaser.Camera.FOLLOW_LOCKON);
 
     EntityBuilder.createScout(this.board, this.manager, this.gameRand, 10, 10);
+    EntityBuilder.createFighter(this.board, this.manager, this.gameRand, 15, 15);
   },
 
   takeInput : function() {

@@ -4,6 +4,7 @@ var EntityBuilder = {}
 
 EntityBuilder.loadImages = function () {
   game.load.image('scout', './assets/images/scout.png');
+  game.load.image('fighter', './assets/images/fighter.png');
 }
 
 /******************************************************************************
@@ -25,6 +26,14 @@ EntityBuilder.Weapons = {
     cooldown: 0,
     spread: 2,
     numShots: 3
+  },
+
+  smallGatling : {
+    damage: 2,
+    speed: 50,
+    cooldown: 0,
+    spread: 0,
+    numShots: 1
   }
 }
 
@@ -47,10 +56,18 @@ EntityBuilder.createWeaponEntity = function (manager, gameRand, params) {
 /******************************************************************************
  *                                   SHIPS                                    *
  ******************************************************************************/
-EntityBuilder.createScout = function (board, manager, gameRand, x, y) {
+EntityBuilder.createBaseShip = function (board, manager, x, y) {
   var created = manager.createEntity();
 
   manager.addComponent(created, Component.Position.bind(null, board, x, y));
+
+  manager.addComponent(created, Component.Destroyable.bind(null, manager));
+
+  return created;
+}
+
+EntityBuilder.createScout = function (board, manager, gameRand, x, y) {
+  var created = EntityBuilder.createBaseShip(board, manager, x, y);
 
   manager.addComponent(created, Component.Actor.bind(null, 75));
 
@@ -64,7 +81,25 @@ EntityBuilder.createScout = function (board, manager, gameRand, x, y) {
   manager.addComponent(created, Component.EquipSpace);
   created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.scoutShotgun));
 
-  manager.addComponent(created, Component.Destroyable.bind(null, manager));
+  return created;
+}
+
+EntityBuilder.createFighter = function (board, manager, gameRand, x, y) {
+  var created = EntityBuilder.createBaseShip(board, manager, x, y);
+
+  manager.addComponent(created, Component.Actor.bind(null, 50));
+
+  var cSprite = Component.PhaserSprite.bind(null, x, y, 'fighter');
+  manager.addComponent(created, cSprite);
+
+  manager.addComponent(created, Component.FoeAI.bind(null, AI.BaseAI.Create(0)));
+
+  manager.addComponent(created, Component.Fighter.bind(null, 30, 0, 0));
+
+  manager.addComponent(created, Component.EquipSpace);
+  created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.smallGatling));
+  created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.smallGatling));
+  created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.smallGatling));
 
   return created;
 }
