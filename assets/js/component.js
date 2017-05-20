@@ -229,12 +229,13 @@ Component.EquipSpace.prototype.getEquipped = function () {
  * Weapon Component *
  ********************/
 
-Component.Weapon = function Weapon (gameRand, projSpeed, cooldown, spread, numShots) {
+Component.Weapon = function Weapon (gameRand, projSpeed, cooldown, spread, numShots, damage) {
   this.gameRand = gameRand;
   this.projSpeed = projSpeed;
   this.cooldown = cooldown;
   this.spread = (spread == undefined) ? 0 : spread;
   this.numShots = (numShots == undefined) ? 1 : numShots;
+  this.damage = damage;
 
   this.ttl = 0;
 };
@@ -252,14 +253,19 @@ Component.Weapon.prototype.singleShot = function(board, entityManager, tX, tY) {
     dY = 0;
   }
 
+  var equipper = this.owner.equipment.getEquipper();
+  var equipperPower = (!!equipper.fighter) ? equipper.fighter.power : 0;
+
   EntityBuilder.createLineProjectile(
     board,
     entityManager,
-    this.owner.equipment.getEquipper().position.x,
-    this.owner.equipment.getEquipper().position.y,
+    equipper.position.x,
+    equipper.position.y,
     tX + dX,
     tY + dY,
-    this.projSpeed);
+    this.projSpeed,
+    this.damage + equipperPower
+  );
 }
 
 Component.Weapon.prototype.tryFire = function(board, entityManager, tX, tY) {

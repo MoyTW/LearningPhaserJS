@@ -12,6 +12,7 @@ EntityBuilder.loadImages = function () {
 EntityBuilder.Weapons = {
 
   cuttingLaser : {
+    damage: 0,
     speed: 0,
     cooldown: 0,
     spread: 0,
@@ -19,6 +20,7 @@ EntityBuilder.Weapons = {
   },
 
   scoutShotgun : {
+    damage: 1,
     speed: 25,
     cooldown: 0,
     spread: 2,
@@ -35,7 +37,8 @@ EntityBuilder.createWeaponEntity = function (manager, gameRand, params) {
                                                 params.speed,
                                                 params.cooldown,
                                                 params.spread,
-                                                params.numShots));
+                                                params.numShots,
+                                                params.damage));
 
   return e;
 }
@@ -78,7 +81,7 @@ EntityBuilder.createPlayer = function (board, manager, gameRand, x, y) {
   var cSprite = Component.PhaserSprite.bind(null, x, y, 'skiff');
   manager.addComponent(player, cSprite);
 
-  manager.addComponent(player, Component.Fighter.bind(null, 15, 0, 5));
+  manager.addComponent(player, Component.Fighter.bind(null, 15, 0, 1000));
 
   manager.addComponent(player, Component.EquipSpace);
   var weapon = EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.cuttingLaser);
@@ -113,7 +116,7 @@ EntityBuilder.createSatellite = function (board, manager, x, y) {
   return satellite;
 }
 
-EntityBuilder.createLineProjectile = function (board, manager, x0, y0, x1, y1, speed) {
+EntityBuilder.createLineProjectile = function (board, manager, x0, y0, x1, y1, speed, damage) {
   var projectile = manager.createEntity();
 
   var cp = Component.Position.bind(null, board, x0, y0, false);
@@ -128,7 +131,7 @@ EntityBuilder.createLineProjectile = function (board, manager, x0, y0, x1, y1, s
   var path = Pattern.LinePath.Create(x0, y0, x1, y1);
   manager.addComponent(projectile, Component.ProjectileAI.bind(null, path));
 
-  manager.addComponent(projectile, Component.Fighter.bind(null, 1, 0, 1));
+  manager.addComponent(projectile, Component.Fighter.bind(null, 1, 0, damage));
   manager.addComponent(projectile, Component.Destroyable.bind(null, manager));
 
   return projectile;
