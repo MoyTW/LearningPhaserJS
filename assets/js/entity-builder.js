@@ -35,6 +35,7 @@ EntityBuilder.Weapons = {
     spread: 0,
     numShots: 1
   }
+
 }
 
 EntityBuilder.createWeaponEntity = function (manager, gameRand, params) {
@@ -56,47 +57,34 @@ EntityBuilder.createWeaponEntity = function (manager, gameRand, params) {
 /******************************************************************************
  *                                   SHIPS                                    *
  ******************************************************************************/
-EntityBuilder.createBaseShip = function (board, manager, x, y) {
+EntityBuilder.createBaseShip = function (board, manager, speed, x, y, sprite, destroyFn, hp, defense, power) {
   var created = manager.createEntity();
 
+  manager.addComponent(created, Component.Actor.bind(null, speed));
   manager.addComponent(created, Component.Position.bind(null, board, x, y));
-
+  manager.addComponent(created, Component.PhaserSprite.bind(null, x, y, sprite));
+  manager.addComponent(created, Component.Fighter.bind(null, hp, defense, power));
+  manager.addComponent(created, Component.EquipSpace);
   manager.addComponent(created, Component.Destroyable.bind(null, manager));
 
   return created;
 }
 
 EntityBuilder.createScout = function (board, manager, gameRand, x, y) {
-  var created = EntityBuilder.createBaseShip(board, manager, x, y);
-
-  manager.addComponent(created, Component.Actor.bind(null, 75));
-
-  var cSprite = Component.PhaserSprite.bind(null, x, y, 'scout');
-  manager.addComponent(created, cSprite);
+  var created = EntityBuilder.createBaseShip(board, manager, 75, x, y, 'scout', null, 10, 0, 2);
 
   manager.addComponent(created, Component.FoeAI.bind(null, AI.BaseAI.Create(5)));
 
-  manager.addComponent(created, Component.Fighter.bind(null, 10, 0, 2));
-
-  manager.addComponent(created, Component.EquipSpace);
   created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.scoutShotgun));
 
   return created;
 }
 
 EntityBuilder.createFighter = function (board, manager, gameRand, x, y) {
-  var created = EntityBuilder.createBaseShip(board, manager, x, y);
-
-  manager.addComponent(created, Component.Actor.bind(null, 50));
-
-  var cSprite = Component.PhaserSprite.bind(null, x, y, 'fighter');
-  manager.addComponent(created, cSprite);
+  var created = EntityBuilder.createBaseShip(board, manager, 50, x, y, 'fighter', null, 30, 0, 0);
 
   manager.addComponent(created, Component.FoeAI.bind(null, AI.BaseAI.Create(0)));
 
-  manager.addComponent(created, Component.Fighter.bind(null, 30, 0, 0));
-
-  manager.addComponent(created, Component.EquipSpace);
   created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.smallGatling));
   created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.smallGatling));
   created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.smallGatling));
@@ -105,26 +93,14 @@ EntityBuilder.createFighter = function (board, manager, gameRand, x, y) {
 }
 
 EntityBuilder.createPlayer = function (board, manager, gameRand, x, y) {
-  var player = manager.createEntity();
+  var onPlayerDestroyed = function () { game.state.start('GameOver'); }
+
+  var player = EntityBuilder.createBaseShip(board, manager, 100, x, y, 'skiff', onPlayerDestroyed, 15, 0, 1);
 
   manager.addComponent(player, Component.Player);
 
-  manager.addComponent(player, Component.Actor.bind(null, 100));
-
-  manager.addComponent(player, Component.Position.bind(null, board, x, y));
-
-  var cSprite = Component.PhaserSprite.bind(null, x, y, 'skiff');
-  manager.addComponent(player, cSprite);
-
-  manager.addComponent(player, Component.Fighter.bind(null, 15, 0, 1000));
-
-  manager.addComponent(player, Component.EquipSpace);
   var weapon = EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.cuttingLaser);
   player.equipSpace.equip(weapon);
-
-  var onPlayerDestroyed = function () { game.state.start('GameOver'); }
-  var cd = Component.Destroyable.bind(null, manager,onPlayerDestroyed)
-  manager.addComponent(player, cd);
 
   return player;
 }
