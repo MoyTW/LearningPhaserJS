@@ -59,75 +59,61 @@ EntityBuilder.createWeaponEntity = function (manager, gameRand, params) {
  ******************************************************************************/
 EntityBuilder.Ships = {
   Scout : {
+    driver : Component.FoeAI.bind(null, AI.BaseAI.Create(5)),
     sprite : 'scout',
     speed : 75,
     hp : 10,
     defense : 0,
-    power : 2
+    power : 2,
+    weapons : [EntityBuilder.Weapons.scoutShotgun]
   },
 
   Fighter : {
+    driver : Component.FoeAI.bind(null, AI.BaseAI.Create(0)),
     sprite : 'fighter',
     speed: 125,
     hp : 30,
     defense : 0,
-    power : 0
+    power : 0,
+    weapons : [
+      EntityBuilder.Weapons.smallGatling,
+      EntityBuilder.Weapons.smallGatling,
+      EntityBuilder.Weapons.smallGatling
+    ]
   },
 
   PlayerSkiff : {
+    driver : Component.Player,
     sprite : 'skiff',
     speed: 100,
     hp: 15,
     defense: 0,
     power : 1,
+    weapons : [EntityBuilder.Weapons.cuttingLaser],
     onDestroyedCallback : function () { game.state.start('GameOver'); }
   }
 }
 
-EntityBuilder.createBaseShip = function (board, manager, x, y, params) {
+EntityBuilder.createShipEntity = function (board, manager, gameRand, x, y, params) {
   var created = manager.createEntity();
 
+  // I'm not super fond of having 'driver' be a Constructor function, as opposed
+  // to being just data, since if I put this data into files I'll need to
+  // revisit this. However, that is not in my minimal implementation plan.
+  manager.addComponent(created, params.driver);
   manager.addComponent(created, Component.Actor.bind(null, params.speed));
   manager.addComponent(created, Component.Position.bind(null, board, x, y));
   manager.addComponent(created, Component.PhaserSprite.bind(null, x, y, params.sprite));
   manager.addComponent(created, Component.Fighter.bind(null, params.hp, params.defense, params.power));
   manager.addComponent(created, Component.EquipSpace);
   manager.addComponent(created, Component.Destroyable.bind(null, manager));
+  if (!!params.weapons) {
+    for (var weapon of params.weapons) {
+      created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, weapon));
+    }
+  }
 
   return created;
-}
-
-EntityBuilder.createScout = function (board, manager, gameRand, x, y) {
-  var created = EntityBuilder.createBaseShip(board, manager, x, y, EntityBuilder.Ships.Scout);
-
-  manager.addComponent(created, Component.FoeAI.bind(null, AI.BaseAI.Create(5)));
-
-  created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.scoutShotgun));
-
-  return created;
-}
-
-EntityBuilder.createFighter = function (board, manager, gameRand, x, y) {
-  var created = EntityBuilder.createBaseShip(board, manager, x, y, EntityBuilder.Ships.Fighter);
-
-  manager.addComponent(created, Component.FoeAI.bind(null, AI.BaseAI.Create(0)));
-
-  created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.smallGatling));
-  created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.smallGatling));
-  created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.smallGatling));
-
-  return created;
-}
-
-EntityBuilder.createPlayer = function (board, manager, gameRand, x, y) {
-  var player = EntityBuilder.createBaseShip(board, manager, x, y, EntityBuilder.Ships.PlayerSkiff);
-
-  manager.addComponent(player, Component.Player);
-
-  var weapon = EntityBuilder.createWeaponEntity(manager, gameRand, EntityBuilder.Weapons.cuttingLaser);
-  player.equipSpace.equip(weapon);
-
-  return player;
 }
 
 

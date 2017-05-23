@@ -88,14 +88,14 @@ var Game = {
     this.manager = ECS.EntityManager.Create();
     this.board = this.buildNewBoard(this.manager, this.boardRand);
 
-    var skiffEntity = EntityBuilder.createPlayer(this.board, this.manager, this.gameRand, 5, 5);
+    var skiffEntity = EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 5, 5, EntityBuilder.Ships.PlayerSkiff);
 
     // Follow the skiff
     game.world.setBounds(0, 0, this.board.width * 30, this.board.height * 30);
     game.camera.follow(skiffEntity.phaserSprite.sprite, Phaser.Camera.FOLLOW_LOCKON);
 
-    EntityBuilder.createScout(this.board, this.manager, this.gameRand, 10, 10);
-    EntityBuilder.createFighter(this.board, this.manager, this.gameRand, 15, 15);
+    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 10, 10, EntityBuilder.Ships.Scout);
+    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 15, 15, EntityBuilder.Ships.Fighter);
   },
 
   takeInput : function() {
