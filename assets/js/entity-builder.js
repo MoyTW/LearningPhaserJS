@@ -68,7 +68,7 @@ EntityBuilder.Ships = {
 
   Fighter : {
     sprite : 'fighter',
-    speed: 50,
+    speed: 125,
     hp : 30,
     defense : 0,
     power : 0
