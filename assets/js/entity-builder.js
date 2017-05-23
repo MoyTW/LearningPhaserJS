@@ -57,13 +57,40 @@ EntityBuilder.createWeaponEntity = function (manager, gameRand, params) {
 /******************************************************************************
  *                                   SHIPS                                    *
  ******************************************************************************/
-EntityBuilder.createBaseShip = function (board, manager, speed, x, y, sprite, destroyFn, hp, defense, power) {
+EntityBuilder.Ships = {
+  Scout : {
+    sprite : 'scout',
+    speed : 75,
+    hp : 10,
+    defense : 0,
+    power : 2
+  },
+
+  Fighter : {
+    sprite : 'fighter',
+    speed: 50,
+    hp : 30,
+    defense : 0,
+    power : 0
+  },
+
+  PlayerSkiff : {
+    sprite : 'skiff',
+    speed: 100,
+    hp: 15,
+    defense: 0,
+    power : 1,
+    onDestroyedCallback : function () { game.state.start('GameOver'); }
+  }
+}
+
+EntityBuilder.createBaseShip = function (board, manager, x, y, params) {
   var created = manager.createEntity();
 
-  manager.addComponent(created, Component.Actor.bind(null, speed));
+  manager.addComponent(created, Component.Actor.bind(null, params.speed));
   manager.addComponent(created, Component.Position.bind(null, board, x, y));
-  manager.addComponent(created, Component.PhaserSprite.bind(null, x, y, sprite));
-  manager.addComponent(created, Component.Fighter.bind(null, hp, defense, power));
+  manager.addComponent(created, Component.PhaserSprite.bind(null, x, y, params.sprite));
+  manager.addComponent(created, Component.Fighter.bind(null, params.hp, params.defense, params.power));
   manager.addComponent(created, Component.EquipSpace);
   manager.addComponent(created, Component.Destroyable.bind(null, manager));
 
@@ -71,7 +98,7 @@ EntityBuilder.createBaseShip = function (board, manager, speed, x, y, sprite, de
 }
 
 EntityBuilder.createScout = function (board, manager, gameRand, x, y) {
-  var created = EntityBuilder.createBaseShip(board, manager, 75, x, y, 'scout', null, 10, 0, 2);
+  var created = EntityBuilder.createBaseShip(board, manager, x, y, EntityBuilder.Ships.Scout);
 
   manager.addComponent(created, Component.FoeAI.bind(null, AI.BaseAI.Create(5)));
 
@@ -81,7 +108,7 @@ EntityBuilder.createScout = function (board, manager, gameRand, x, y) {
 }
 
 EntityBuilder.createFighter = function (board, manager, gameRand, x, y) {
-  var created = EntityBuilder.createBaseShip(board, manager, 50, x, y, 'fighter', null, 30, 0, 0);
+  var created = EntityBuilder.createBaseShip(board, manager, x, y, EntityBuilder.Ships.Fighter);
 
   manager.addComponent(created, Component.FoeAI.bind(null, AI.BaseAI.Create(0)));
 
@@ -93,9 +120,7 @@ EntityBuilder.createFighter = function (board, manager, gameRand, x, y) {
 }
 
 EntityBuilder.createPlayer = function (board, manager, gameRand, x, y) {
-  var onPlayerDestroyed = function () { game.state.start('GameOver'); }
-
-  var player = EntityBuilder.createBaseShip(board, manager, 100, x, y, 'skiff', onPlayerDestroyed, 15, 0, 1);
+  var player = EntityBuilder.createBaseShip(board, manager, x, y, EntityBuilder.Ships.PlayerSkiff);
 
   manager.addComponent(player, Component.Player);
 
