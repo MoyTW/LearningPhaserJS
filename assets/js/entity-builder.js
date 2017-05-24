@@ -5,6 +5,7 @@ var EntityBuilder = {}
 EntityBuilder.loadImages = function () {
   game.load.image('scout', './assets/images/scout.png');
   game.load.image('fighter', './assets/images/fighter.png');
+  game.load.image('gunship', './assets/images/gunship.png');
 }
 
 /******************************************************************************
@@ -30,6 +31,22 @@ EntityBuilder.Weapons = {
 
   smallGatling : {
     damage: 2,
+    speed: 50,
+    cooldown: 0,
+    spread: 0,
+    numShots: 1
+  },
+
+  gunshipShotgun : {
+    damage: 1,
+    speed: 25,
+    cooldown: 0,
+    spread: 2,
+    numShots: 3
+  },
+
+  smallCannon : {
+    damage: 5,
     speed: 50,
     cooldown: 0,
     spread: 0,
@@ -79,6 +96,19 @@ EntityBuilder.Ships = {
       EntityBuilder.Weapons.smallGatling,
       EntityBuilder.Weapons.smallGatling,
       EntityBuilder.Weapons.smallGatling
+    ]
+  },
+
+  Gunship : {
+    driver : Component.FoeAI.bind(null, AI.GunshipAI.Create()),
+    sprite : 'gunship',
+    speed: 100,
+    hp : 50,
+    defense : 4,
+    power : 3,
+    weapons : [
+      EntityBuilder.Weapons.gunshipShotgun,
+      EntityBuilder.Weapons.smallCannon
     ]
   },
 

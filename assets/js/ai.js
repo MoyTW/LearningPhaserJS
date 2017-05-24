@@ -60,3 +60,57 @@ AI.BaseAI.takeTurn = function(owner, board, entityManager) {
     }
   }
 }
+
+AI.GunshipAI = Object.create( AI.BaseAI );
+
+// TOOD: Work out an AI framework that is not hard-coded behaviour for each
+// different opponent!
+AI.GunshipAI.Create = function () {
+  var o = Object.create( AI.GunshipAI );
+  o.initBaseAI(5);
+  o.initGunshipAI();
+  return o;
+}
+
+AI.GunshipAI.initGunshipAI = function () {
+  this.shouldMove = true;
+  // This is SUPER DUPER FRAGILE
+  // It relies on the *slots* weapons are stuck in!
+  this.weaponGroups = [
+    [
+      // cooldown & ttl not strict necessary!
+      {slot: 1, priority: 0, group: 0, cooldown: 4, ttl: 0},
+      {slot: 0, priority: 1, group: 0, cooldown: 0, ttl: 0}
+    ]
+  ]
+}
+
+AI.GunshipAI.takeTurn = function(owner, board, entityManager) {
+  var playerPos = entityManager.findPlayer().position;
+
+  // Movement
+  var path = this._buildPathTowards(owner, board, playerPos.x, playerPos.y);
+  if (this.shouldMove && path.length > this.stopApproachDistance) {
+    this._pathTowards(owner, path);
+    this.shouldMove = false;
+  } else {
+    this.shouldMove = true;
+  }
+
+  for (var weaponGroup of this.weaponGroups) {
+    var fired = false;
+    for (var weaponInfo of weaponGroup) {
+      if (!fired && weaponInfo.ttl == 0) {
+        var weaponEntity = owner.equipSpace.getEquippedAt(weaponInfo.slot);
+        weaponEntity.weapon.tryFire(board, entityManager, playerPos.x, playerPos.y);
+        weaponInfo.ttl = weaponInfo.cooldown;
+        fired = true;
+      } else {
+        if (!!weaponInfo.ttl && weaponInfo.ttl > 0) {
+          weaponInfo.ttl--;
+        }
+      }
+    }
+  }
+
+}

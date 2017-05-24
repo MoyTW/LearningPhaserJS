@@ -224,6 +224,11 @@ Component.EquipSpace.prototype.getEquipped = function () {
   return this._equipped;
 }
 
+// Remember multi-arity function defs are Not A Thing in JS!
+Component.EquipSpace.prototype.getEquippedAt = function (idx) {
+  return this._equipped[idx];
+}
+
 
 /********************
  * Weapon Component *

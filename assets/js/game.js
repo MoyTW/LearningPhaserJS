@@ -95,6 +95,7 @@ var Game = {
     game.camera.follow(skiffEntity.phaserSprite.sprite, Phaser.Camera.FOLLOW_LOCKON);
 
     EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 10, 10, EntityBuilder.Ships.Scout);
+    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 12, 12, EntityBuilder.Ships.Gunship);
     EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 15, 15, EntityBuilder.Ships.Fighter);
   },
 
