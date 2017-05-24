@@ -4,6 +4,8 @@ var EntityBuilder = {}
 
 EntityBuilder.loadImages = function () {
   game.load.image('proj_shotgun', './assets/images/projectiles/shotgun.png');
+  game.load.image('proj_gatling', './assets/images/projectiles/gatling.png');
+  game.load.image('proj_cannon', './assets/images/projectiles/cannon.png');
 
   game.load.image('scout', './assets/images/scout.png');
   game.load.image('fighter', './assets/images/fighter.png');
@@ -33,6 +35,7 @@ EntityBuilder.Weapons = {
   },
 
   smallGatling : {
+    projImage: 'proj_gatling',
     damage: 2,
     speed: 50,
     cooldown: 0,
@@ -50,6 +53,7 @@ EntityBuilder.Weapons = {
   },
 
   smallCannon : {
+    projImage: 'proj_cannon',
     damage: 5,
     speed: 50,
     cooldown: 0,
@@ -181,13 +185,10 @@ EntityBuilder.createLineProjectile = function (board, manager, x0, y0, x1, y1, s
 
   manager.addComponent(projectile, Component.Actor.bind(null, speed, 0));
 
-  var sc;
   if (!!projImage) {
-    sc = Component.PhaserSprite.bind(null, x0, y0, projImage);
-  } else {
-    sc = Component.PhaserSprite.bind(null, x0, y0, 'bullet');
+    var sc = Component.PhaserSprite.bind(null, x0, y0, projImage);
+    manager.addComponent(projectile, sc);
   }
-  manager.addComponent(projectile, sc);
 
   // This is ridiculous.
   var path = Pattern.LinePath.Create(x0, y0, x1, y1);
