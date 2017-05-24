@@ -234,13 +234,14 @@ Component.EquipSpace.prototype.getEquippedAt = function (idx) {
  * Weapon Component *
  ********************/
 
-Component.Weapon = function Weapon (gameRand, projSpeed, cooldown, spread, numShots, damage) {
+Component.Weapon = function Weapon (gameRand, projSpeed, cooldown, spread, numShots, damage, projImage) {
   this.gameRand = gameRand;
   this.projSpeed = projSpeed;
   this.cooldown = cooldown;
   this.spread = (spread == undefined) ? 0 : spread;
   this.numShots = (numShots == undefined) ? 1 : numShots;
   this.damage = damage;
+  this.projImage = projImage;
 
   this.ttl = 0;
 };
@@ -269,7 +270,8 @@ Component.Weapon.prototype.singleShot = function(board, entityManager, tX, tY) {
     tX + dX,
     tY + dY,
     this.projSpeed,
-    this.damage + equipperPower
+    this.damage + equipperPower,
+    this.projImage
   );
 }
 

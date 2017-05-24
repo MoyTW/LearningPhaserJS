@@ -3,6 +3,8 @@
 var EntityBuilder = {}
 
 EntityBuilder.loadImages = function () {
+  game.load.image('proj_shotgun', './assets/images/projectiles/shotgun.png');
+
   game.load.image('scout', './assets/images/scout.png');
   game.load.image('fighter', './assets/images/fighter.png');
   game.load.image('gunship', './assets/images/gunship.png');
@@ -22,6 +24,7 @@ EntityBuilder.Weapons = {
   },
 
   scoutShotgun : {
+    projImage: 'proj_shotgun',
     damage: 1,
     speed: 25,
     cooldown: 0,
@@ -38,6 +41,7 @@ EntityBuilder.Weapons = {
   },
 
   gunshipShotgun : {
+    projImage: 'proj_shotgun',
     damage: 1,
     speed: 25,
     cooldown: 0,
@@ -65,7 +69,8 @@ EntityBuilder.createWeaponEntity = function (manager, gameRand, params) {
                                                 params.cooldown,
                                                 params.spread,
                                                 params.numShots,
-                                                params.damage));
+                                                params.damage,
+                                                params.projImage));
 
   return e;
 }
@@ -168,7 +173,7 @@ EntityBuilder.createSatellite = function (board, manager, x, y) {
   return satellite;
 }
 
-EntityBuilder.createLineProjectile = function (board, manager, x0, y0, x1, y1, speed, damage) {
+EntityBuilder.createLineProjectile = function (board, manager, x0, y0, x1, y1, speed, damage, projImage) {
   var projectile = manager.createEntity();
 
   var cp = Component.Position.bind(null, board, x0, y0, false);
@@ -176,7 +181,12 @@ EntityBuilder.createLineProjectile = function (board, manager, x0, y0, x1, y1, s
 
   manager.addComponent(projectile, Component.Actor.bind(null, speed, 0));
 
-  var sc = Component.PhaserSprite.bind(null, x0, y0, 'bullet');
+  var sc;
+  if (!!projImage) {
+    sc = Component.PhaserSprite.bind(null, x0, y0, projImage);
+  } else {
+    sc = Component.PhaserSprite.bind(null, x0, y0, 'bullet');
+  }
   manager.addComponent(projectile, sc);
 
   // This is ridiculous.
