@@ -43,6 +43,14 @@ Pattern.Path = {
     return this._path[this._currentStep - 1];
   },
 
+  furthestComputedPosition : function () {
+    return this._path[this._path.length - 1];
+  },
+
+  stepsComputed : function () {
+    return this._path.length;
+  },
+
   currentStepDiff : function() {
     if (this._currentStep > 0) {
       var pCurrent = this.currentPosition();
@@ -82,9 +90,9 @@ Pattern.Path = {
   }
 }
 
-/******************
- * LinePath *
- ******************/
+/******************************************************************************
+ *                                 LinePath                                   *
+ ******************************************************************************/
 Pattern.LinePath = Object.create( Pattern.Path );
 
 // I can work with constructor functions. I know how to do that.
@@ -135,5 +143,51 @@ Pattern.LinePath.calcStep = function () {
   } else {
     this.error += this.dErr;
     return [lastCalculatedX + this.xDiff, lastCalculatedY];
+  }
+}
+
+/******************************************************************************
+ *                               ReverserPath                                 *
+ ******************************************************************************/
+Pattern.ReverserPath = Object.create( Pattern.Path );
+
+Pattern.ReverserPath.Create = function(x0, y0, x1, y1, overshoot) {
+  var o = Object.create( Pattern.ReverserPath );
+  o.initReverserPath(x0, y0, x1, y1, overshoot);
+  return o;
+}
+
+// Really messy!
+Pattern.ReverserPath.initReverserPath = function (x0, y0, x1, y1, overshoot) {
+  this.hasReversed = false;
+
+  this.straightSegment = Pattern.LinePath.Create(x0, y0, x1, y1);
+  // Measure the distance and calculate until you reach it
+  var furthestComputed = this.straightSegment.furthestComputedPosition();
+  while (!(furthestComputed[0] == x1 && furthestComputed[1] == y1) &&
+         this.straightSegment.stepsComputed() < 100) {
+    this.straightSegment.calcSteps(1);
+    furthestComputed = this.straightSegment.furthestComputedPosition();
+  }
+  this.straightSegment.calcSteps(overshoot);
+
+  // Destructuring would be appropriate here.
+  furthestComputed = this.straightSegment.furthestComputedPosition();
+  this.endX = furthestComputed[0];
+  this.endY = furthestComputed[1];
+
+  this.reverseSegment = Pattern.LinePath.Create(this.endX, this.endY, x0, y0);
+
+  this.initPath(x0, y0, this.calcStep);
+}
+
+Pattern.ReverserPath.calcStep = function () {
+  if (!this.hasReversed) {
+    var next = this.straightSegment._path[this._path.length];
+    if (next[0] == this.endX && next[1] == this.endY) { this.hasReversed = true; }
+    return next;
+  } else {
+    this.reverseSegment.step();
+    return this.reverseSegment.currentPosition();
   }
 }
