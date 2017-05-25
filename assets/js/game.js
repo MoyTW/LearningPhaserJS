@@ -184,7 +184,7 @@ var Game = {
     // There *could* be a perf hit from running all the nextActor stuff
     // constantly but - well, I guess it might eat a little battery? I'll keep
     // the next actor as a derived property for now.
-    while (nextActor != manager.findPlayer()) {
+    while (nextActor != manager.findPlayer() && manager.findPlayer() != null) {
       var actors = manager.findByComponent(Component.Actor);
       nextActor = this.gotoNextActor(actors);
       this.runTurn(board, manager, nextActor);

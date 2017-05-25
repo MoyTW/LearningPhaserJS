@@ -145,7 +145,7 @@ EntityBuilder.createShipEntity = function (board, manager, gameRand, x, y, param
   manager.addComponent(created, Component.PhaserSprite.bind(null, x, y, params.sprite));
   manager.addComponent(created, Component.Fighter.bind(null, params.hp, params.defense, params.power));
   manager.addComponent(created, Component.EquipSpace);
-  manager.addComponent(created, Component.Destroyable.bind(null, manager));
+  manager.addComponent(created, Component.Destroyable.bind(null, manager, params.onDestroyedCallback));
   if (!!params.weapons) {
     for (var weapon of params.weapons) {
       created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, weapon));
