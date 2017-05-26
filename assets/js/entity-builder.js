@@ -11,6 +11,7 @@ EntityBuilder.loadImages = function () {
   game.load.image('scout', './assets/images/scout.png');
   game.load.image('fighter', './assets/images/fighter.png');
   game.load.image('gunship', './assets/images/gunship.png');
+  game.load.image('frigate', './assets/images/frigate.png');
 }
 
 /******************************************************************************
@@ -95,7 +96,21 @@ EntityBuilder.Weapons = {
     cooldown: 0,
     spread: 0,
     numShots: 1
+  },
+
+  frigateShotgun: {
+    path: {
+      base: Pattern.LinePath,
+      params: {}
+    },
+    projImage: 'proj_shotgun',
+    damage: 1,
+    speed: 25,
+    cooldown: 0,
+    spread: 3,
+    numShots: 2
   }
+
 }
 
 EntityBuilder.createWeaponEntity = function (manager, gameRand, blueprint) {
@@ -112,52 +127,66 @@ EntityBuilder.createWeaponEntity = function (manager, gameRand, blueprint) {
  *                                   SHIPS                                    *
  ******************************************************************************/
 EntityBuilder.Ships = {
-  Scout : {
-    driver : Component.FoeAI.bind(null, AI.BaseAI.Create(5)),
-    sprite : 'scout',
-    speed : 75,
-    hp : 10,
-    defense : 0,
-    power : 2,
-    weapons : [EntityBuilder.Weapons.scoutShotgun]
+  Scout: {
+    driver: Component.FoeAI.bind(null, AI.BaseAI.Create(5)),
+    sprite: 'scout',
+    speed: 75,
+    hp: 10,
+    defense: 0,
+    power: 2,
+    weapons: [EntityBuilder.Weapons.reverser]
   },
 
-  Fighter : {
-    driver : Component.FoeAI.bind(null, AI.BaseAI.Create(0)),
-    sprite : 'fighter',
+  Fighter: {
+    driver: Component.FoeAI.bind(null, AI.BaseAI.Create(0)),
+    sprite: 'fighter',
     speed: 125,
-    hp : 30,
-    defense : 0,
-    power : 0,
-    weapons : [
+    hp: 30,
+    defense: 0,
+    power: 0,
+    weapons: [
       EntityBuilder.Weapons.smallGatling,
       EntityBuilder.Weapons.smallGatling,
       EntityBuilder.Weapons.smallGatling
     ]
   },
 
-  Gunship : {
-    driver : Component.FoeAI.bind(null, AI.GunshipAI.Create()),
-    sprite : 'gunship',
+  Gunship: {
+    driver: Component.FoeAI.bind(null, AI.GunshipAI.Create()),
+    sprite: 'gunship',
     speed: 100,
-    hp : 50,
-    defense : 4,
-    power : 3,
-    weapons : [
+    hp: 50,
+    defense: 4,
+    power: 3,
+    weapons: [
       EntityBuilder.Weapons.gunshipShotgun,
       EntityBuilder.Weapons.smallCannon
     ]
   },
 
-  PlayerSkiff : {
-    driver : Component.Player,
-    sprite : 'skiff',
+  Frigate: {
+    driver: Component.FoeAI.bind(null, AI.BaseAI.Create(0)),
+    sprite: 'frigate',
+    speed: 250,
+    defense: 10,
+    power: 3,
+    weapons: [
+      EntityBuilder.Weapons.reverser,
+      EntityBuilder.Weapons.smallGatling,
+      EntityBuilder.Weapons.smallCannon,
+      EntityBuilder.Weapons.frigateShotgun
+    ]
+  },
+
+  PlayerSkiff: {
+    driver: Component.Player,
+    sprite: 'skiff',
     speed: 100,
     hp: 15,
     defense: 0,
-    power : 1,
-    weapons : [EntityBuilder.Weapons.cuttingLaser],
-    onDestroyedCallback : function () { game.state.start('GameOver'); }
+    power: 1,
+    weapons: [EntityBuilder.Weapons.cuttingLaser],
+    onDestroyedCallback: function () { game.state.start('GameOver'); }
   }
 }
 
