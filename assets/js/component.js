@@ -234,14 +234,15 @@ Component.EquipSpace.prototype.getEquippedAt = function (idx) {
  * Weapon Component *
  ********************/
 
-Component.Weapon = function Weapon (gameRand, params) {
+Component.Weapon = function Weapon (gameRand, blueprint) {
   this.gameRand = gameRand;
-  this.projSpeed = params.speed;
-  this.cooldown = params.cooldown;
-  this.spread = (params.spread == undefined) ? 0 : params.spread;
-  this.numShots = (params.numShots == undefined) ? 1 : params.numShots;
-  this.damage = params.damage;
-  this.projImage = params.projImage;
+  this.projSpeed = blueprint.speed;
+  this.cooldown = blueprint.cooldown;
+  this.spread = (blueprint.spread == undefined) ? 0 : blueprint.spread;
+  this.numShots = (blueprint.numShots == undefined) ? 1 : blueprint.numShots;
+  this.damage = blueprint.damage;
+  this.projImage = blueprint.projImage;
+  this.path = blueprint.path;
 
   this.ttl = 0;
 };
@@ -259,20 +260,7 @@ Component.Weapon.prototype.singleShot = function(board, entityManager, tX, tY) {
     dY = 0;
   }
 
-  var equipper = this.owner.equipment.getEquipper();
-  var equipperPower = (!!equipper.fighter) ? equipper.fighter.power : 0;
-
-  EntityBuilder.createLineProjectile(
-    board,
-    entityManager,
-    equipper.position.x,
-    equipper.position.y,
-    tX + dX,
-    tY + dY,
-    this.projSpeed,
-    this.damage + equipperPower,
-    this.projImage
-  );
+  EntityBuilder.createProjectile(board, entityManager, this, tX + dX, tY + dY);
 }
 
 Component.Weapon.prototype.tryFire = function(board, entityManager, tX, tY) {

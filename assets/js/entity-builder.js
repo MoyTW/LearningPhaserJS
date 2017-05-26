@@ -18,6 +18,10 @@ EntityBuilder.loadImages = function () {
 EntityBuilder.Weapons = {
 
   cuttingLaser : {
+    path: {
+      base: Pattern.LinePath,
+      params: {}
+    },
     damage: 0,
     speed: 0,
     cooldown: 0,
@@ -26,6 +30,10 @@ EntityBuilder.Weapons = {
   },
 
   scoutShotgun : {
+    path: {
+      base: Pattern.LinePath,
+      params: {}
+    },
     projImage: 'proj_shotgun',
     damage: 1,
     speed: 25,
@@ -35,6 +43,10 @@ EntityBuilder.Weapons = {
   },
 
   smallGatling : {
+    path: {
+      base: Pattern.LinePath,
+      params: {}
+    },
     projImage: 'proj_gatling',
     damage: 2,
     speed: 50,
@@ -44,6 +56,10 @@ EntityBuilder.Weapons = {
   },
 
   gunshipShotgun : {
+    path: {
+      base: Pattern.LinePath,
+      params: {}
+    },
     projImage: 'proj_shotgun',
     damage: 1,
     speed: 25,
@@ -53,6 +69,10 @@ EntityBuilder.Weapons = {
   },
 
   smallCannon : {
+    path: {
+      base: Pattern.LinePath,
+      params: {}
+    },
     projImage: 'proj_cannon',
     damage: 5,
     speed: 50,
@@ -63,11 +83,11 @@ EntityBuilder.Weapons = {
 
 }
 
-EntityBuilder.createWeaponEntity = function (manager, gameRand, params) {
+EntityBuilder.createWeaponEntity = function (manager, gameRand, blueprint) {
   var e = manager.createEntity();
 
   manager.addComponent(e, Component.Equipment);
-  manager.addComponent(e, Component.Weapon.bind(null, gameRand, params));
+  manager.addComponent(e, Component.Weapon.bind(null, gameRand, blueprint));
 
   return e;
 }
@@ -170,21 +190,26 @@ EntityBuilder.createSatellite = function (board, manager, x, y) {
   return satellite;
 }
 
-EntityBuilder.createLineProjectile = function (board, manager, x0, y0, x1, y1, speed, damage, projImage) {
+EntityBuilder.createProjectile = function (board, manager, weapon, x1, y1) {
+  var equipper = weapon.owner.equipment.getEquipper();
+  var damage = weapon.damage + (!!equipper.fighter) ? equipper.fighter.power : 0;
+  var x0 = equipper.position.x;
+  var y0 = equipper.position.y;
+
   var projectile = manager.createEntity();
 
   var cp = Component.Position.bind(null, board, x0, y0, false);
   manager.addComponent(projectile, cp);
 
-  manager.addComponent(projectile, Component.Actor.bind(null, speed, 0));
+  manager.addComponent(projectile, Component.Actor.bind(null, weapon.projSpeed, 0));
 
-  if (!!projImage) {
-    var sc = Component.PhaserSprite.bind(null, x0, y0, projImage);
+  if (!!weapon.projImage) {
+    var sc = Component.PhaserSprite.bind(null, x0, y0, weapon.projImage);
     manager.addComponent(projectile, sc);
   }
 
   // This is ridiculous.
-  var path = Pattern.LinePath.Create(x0, y0, x1, y1);
+  var path = weapon.path.base.Create(x0, y0, x1, y1, weapon.path.params);
   manager.addComponent(projectile, Component.ProjectileAI.bind(null, path));
 
   manager.addComponent(projectile, Component.Fighter.bind(null, 1, 0, damage));
