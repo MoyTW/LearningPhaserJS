@@ -67,14 +67,7 @@ EntityBuilder.createWeaponEntity = function (manager, gameRand, params) {
   var e = manager.createEntity();
 
   manager.addComponent(e, Component.Equipment);
-  manager.addComponent(e, Component.Weapon.bind(null,
-                                                gameRand,
-                                                params.speed,
-                                                params.cooldown,
-                                                params.spread,
-                                                params.numShots,
-                                                params.damage,
-                                                params.projImage));
+  manager.addComponent(e, Component.Weapon.bind(null, gameRand, params));
 
   return e;
 }
