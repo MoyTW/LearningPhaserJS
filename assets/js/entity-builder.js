@@ -6,6 +6,7 @@ EntityBuilder.loadImages = function () {
   game.load.image('proj_shotgun', './assets/images/projectiles/shotgun.png');
   game.load.image('proj_gatling', './assets/images/projectiles/gatling.png');
   game.load.image('proj_cannon', './assets/images/projectiles/cannon.png');
+  game.load.image('proj_reverser', './assets/images/projectiles/reverser.png');
 
   game.load.image('scout', './assets/images/scout.png');
   game.load.image('fighter', './assets/images/fighter.png');
@@ -17,7 +18,7 @@ EntityBuilder.loadImages = function () {
  ******************************************************************************/
 EntityBuilder.Weapons = {
 
-  cuttingLaser : {
+  cuttingLaser: {
     path: {
       base: Pattern.LinePath,
       params: {}
@@ -29,7 +30,7 @@ EntityBuilder.Weapons = {
     numShots: 1
   },
 
-  scoutShotgun : {
+  scoutShotgun: {
     path: {
       base: Pattern.LinePath,
       params: {}
@@ -42,7 +43,7 @@ EntityBuilder.Weapons = {
     numShots: 3
   },
 
-  smallGatling : {
+  smallGatling: {
     path: {
       base: Pattern.LinePath,
       params: {}
@@ -55,7 +56,7 @@ EntityBuilder.Weapons = {
     numShots: 1
   },
 
-  gunshipShotgun : {
+  gunshipShotgun: {
     path: {
       base: Pattern.LinePath,
       params: {}
@@ -68,7 +69,7 @@ EntityBuilder.Weapons = {
     numShots: 3
   },
 
-  smallCannon : {
+  smallCannon: {
     path: {
       base: Pattern.LinePath,
       params: {}
@@ -79,8 +80,22 @@ EntityBuilder.Weapons = {
     cooldown: 0,
     spread: 0,
     numShots: 1
-  }
+  },
 
+  reverser: {
+    path: {
+      base: Pattern.ReverserPath,
+      params: {
+        overshoot: 4
+      }
+    },
+    projImage: 'proj_reverser',
+    damage: 2,
+    speed: 33,
+    cooldown: 0,
+    spread: 0,
+    numShots: 1
+  }
 }
 
 EntityBuilder.createWeaponEntity = function (manager, gameRand, blueprint) {

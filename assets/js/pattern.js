@@ -151,9 +151,9 @@ Pattern.LinePath.calcStep = function () {
  ******************************************************************************/
 Pattern.ReverserPath = Object.create( Pattern.Path );
 
-Pattern.ReverserPath.Create = function(x0, y0, x1, y1, overshoot) {
+Pattern.ReverserPath.Create = function(x0, y0, x1, y1, params) {
   var o = Object.create( Pattern.ReverserPath );
-  o.initReverserPath(x0, y0, x1, y1, overshoot);
+  o.initReverserPath(x0, y0, x1, y1, params.overshoot);
   return o;
 }
 
