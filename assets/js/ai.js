@@ -112,5 +112,50 @@ AI.GunshipAI.takeTurn = function(owner, board, entityManager) {
       }
     }
   }
+}
 
+AI.ParameterizedAI = Object.create( AI.BaseAI );
+
+AI.ParameterizedAI.initParameterizedAI = function (aiParams) {
+  this.stopApproachDistance = aiParams.stopApproachDistance;
+  this.weaponGroups = aiParams.weaponGroups;
+  if (aiParams.moveCooldown) {
+    this.moveCooldown = aiParams.moveCooldown;
+    this.moveTTL = 0;
+  }
+}
+
+AI.ParameterizedAI.Create = function (aiParams) {
+  var o = Object.create( AI.ParameterizedAI );
+  o.initParameterizedAI(aiParams);
+  return o;
+}
+
+AI.ParameterizedAI.takeTurn = function(owner, board, entityManager) {
+  var playerPos = entityManager.findPlayer().position;
+
+  // Movement
+  var path = this._buildPathTowards(owner, board, playerPos.x, playerPos.y);
+  if (!!this.moveCooldown && this.moveTTL == 0 && path.length > this.stopApproachDistance) {
+    this._pathTowards(owner, path);
+    this.moveTTL = this.moveCooldown;
+  } else {
+    this.moveTTL--;
+  }
+
+  for (var weaponGroup of this.weaponGroups) {
+    var fired = false;
+    for (var weaponInfo of weaponGroup) {
+      if (!fired && weaponInfo.ttl == 0) {
+        var weaponEntity = owner.equipSpace.getEquippedAt(weaponInfo.slot);
+        weaponEntity.weapon.tryFire(board, entityManager, playerPos.x, playerPos.y);
+        weaponInfo.ttl = weaponInfo.cooldown;
+        fired = true;
+      } else {
+        if (!!weaponInfo.ttl && weaponInfo.ttl > 0) {
+          weaponInfo.ttl--;
+        }
+      }
+    }
+  }
 }

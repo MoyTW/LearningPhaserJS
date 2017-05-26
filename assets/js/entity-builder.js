@@ -152,12 +152,21 @@ EntityBuilder.Ships = {
   },
 
   Gunship: {
-    driver: Component.FoeAI.bind(null, AI.GunshipAI.Create()),
     sprite: 'gunship',
     speed: 100,
     hp: 50,
     defense: 4,
     power: 3,
+    ai: {
+      stopApproachDistance: 5,
+      moveCooldown: 1,
+      weaponGroups: [
+        [
+          {slot: 1, priority: 0, group: 0, cooldown: 4, ttl: 0},
+          {slot: 0, priority: 1, group: 0, cooldown: 0, ttl: 0}
+        ]
+      ]
+    },
     weapons: [
       EntityBuilder.Weapons.gunshipShotgun,
       EntityBuilder.Weapons.smallCannon
@@ -179,7 +188,7 @@ EntityBuilder.Ships = {
   },
 
   PlayerSkiff: {
-    driver: Component.Player,
+    player: true,
     sprite: 'skiff',
     speed: 100,
     hp: 15,
@@ -196,7 +205,15 @@ EntityBuilder.createShipEntity = function (board, manager, gameRand, x, y, param
   // I'm not super fond of having 'driver' be a Constructor function, as opposed
   // to being just data, since if I put this data into files I'll need to
   // revisit this. However, that is not in my minimal implementation plan.
-  manager.addComponent(created, params.driver);
+
+  if (params.player) {
+    manager.addComponent(created, Component.Player);
+  } else if (!!params.ai) {
+    manager.addComponent(created, Component.FoeAI.bind(null, AI.ParameterizedAI.Create(params.ai)));
+  } else if (!!params.driver) {
+    manager.addComponent(created, params.driver);
+  }
+
   manager.addComponent(created, Component.Actor.bind(null, params.speed));
   manager.addComponent(created, Component.Position.bind(null, board, x, y));
   manager.addComponent(created, Component.PhaserSprite.bind(null, x, y, params.sprite));
