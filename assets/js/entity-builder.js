@@ -135,7 +135,7 @@ EntityBuilder.Ships = {
     power: 2,
     ai: {
       stopApproachDistance: 5,
-      weaponGroups: [[{slot: 0, priority: 0, group: 0, cooldown: 0, ttl: 0}]]
+      weaponGroups: [[{slots: [0], priority: 0, group: 0, cooldown: 0, ttl: 0}]]
     },
     weapons: [EntityBuilder.Weapons.scoutShotgun]
   },
@@ -148,11 +148,7 @@ EntityBuilder.Ships = {
     power: 0,
     ai: {
       stopApproachDistance: 0,
-      weaponGroups: [
-        [{slot: 0, priority: 0, group: 0, cooldown: 0, ttl: 0}],
-        [{slot: 1, priority: 0, group: 0, cooldown: 0, ttl: 0}],
-        [{slot: 2, priority: 0, group: 0, cooldown: 0, ttl: 0}]
-      ]
+      weaponGroups: [[{slots: [0, 1, 2], priority: 0, group: 0, cooldown: 0, ttl: 0}]]
     },
     weapons: [
       EntityBuilder.Weapons.smallGatling,
@@ -172,8 +168,8 @@ EntityBuilder.Ships = {
       moveCooldown: 1,
       weaponGroups: [
         [
-          {slot: 1, priority: 0, group: 0, cooldown: 4, ttl: 0},
-          {slot: 0, priority: 1, group: 0, cooldown: 0, ttl: 0}
+          {slots: [1], priority: 0, group: 0, cooldown: 4, ttl: 0},
+          {slots: [0], priority: 1, group: 0, cooldown: 0, ttl: 0}
         ]
       ]
     },
@@ -191,10 +187,10 @@ EntityBuilder.Ships = {
     ai: {
       stopApproachDistance: 0,
       weaponGroups: [
-        [{slot: 0, priority: 0, group: 0, cooldown: 0, ttl: 0}],
-        [{slot: 1, priority: 0, group: 0, cooldown: 0, ttl: 0}],
-        [{slot: 2, priority: 0, group: 0, cooldown: 0, ttl: 0}],
-        [{slot: 3, priority: 0, group: 0, cooldown: 0, ttl: 0}]
+        [
+          {slots: [0, 2], priority: 0, group: 0, cooldown: 2, ttl: 0},
+          {slots: [1, 2, 3], priority: 1, group: 0, cooldown: 0, ttl: 0}
+        ]
       ]
     },
     weapons: [

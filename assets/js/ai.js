@@ -96,10 +96,12 @@ AI.ParameterizedAI.takeTurn = function(owner, board, entityManager) {
     var fired = false;
     for (var weaponInfo of weaponGroup) {
       if (!fired && weaponInfo.ttl == 0) {
-        var weaponEntity = owner.equipSpace.getEquippedAt(weaponInfo.slot);
-        weaponEntity.weapon.tryFire(board, entityManager, playerPos.x, playerPos.y);
-        weaponInfo.ttl = weaponInfo.cooldown;
-        fired = true;
+        for (var weaponSlot of weaponInfo.slots) {
+          var weaponEntity = owner.equipSpace.getEquippedAt(weaponSlot);
+          weaponEntity.weapon.tryFire(board, entityManager, playerPos.x, playerPos.y);
+          weaponInfo.ttl = weaponInfo.cooldown;
+          fired = true;
+        }
       } else {
         if (!!weaponInfo.ttl && weaponInfo.ttl > 0) {
           weaponInfo.ttl--;
