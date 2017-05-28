@@ -128,22 +128,32 @@ EntityBuilder.createWeaponEntity = function (manager, gameRand, blueprint) {
  ******************************************************************************/
 EntityBuilder.Ships = {
   Scout: {
-    driver: Component.FoeAI.bind(null, AI.BaseAI.Create(5)),
     sprite: 'scout',
     speed: 75,
     hp: 10,
     defense: 0,
     power: 2,
-    weapons: [EntityBuilder.Weapons.reverser]
+    ai: {
+      stopApproachDistance: 5,
+      weaponGroups: [[{slot: 0, priority: 0, group: 0, cooldown: 0, ttl: 0}]]
+    },
+    weapons: [EntityBuilder.Weapons.scoutShotgun]
   },
 
   Fighter: {
-    driver: Component.FoeAI.bind(null, AI.BaseAI.Create(0)),
     sprite: 'fighter',
     speed: 125,
     hp: 30,
     defense: 0,
     power: 0,
+    ai: {
+      stopApproachDistance: 0,
+      weaponGroups: [
+        [{slot: 0, priority: 0, group: 0, cooldown: 0, ttl: 0}],
+        [{slot: 1, priority: 0, group: 0, cooldown: 0, ttl: 0}],
+        [{slot: 2, priority: 0, group: 0, cooldown: 0, ttl: 0}]
+      ]
+    },
     weapons: [
       EntityBuilder.Weapons.smallGatling,
       EntityBuilder.Weapons.smallGatling,
@@ -174,11 +184,19 @@ EntityBuilder.Ships = {
   },
 
   Frigate: {
-    driver: Component.FoeAI.bind(null, AI.BaseAI.Create(0)),
     sprite: 'frigate',
     speed: 250,
     defense: 10,
     power: 3,
+    ai: {
+      stopApproachDistance: 0,
+      weaponGroups: [
+        [{slot: 0, priority: 0, group: 0, cooldown: 0, ttl: 0}],
+        [{slot: 1, priority: 0, group: 0, cooldown: 0, ttl: 0}],
+        [{slot: 2, priority: 0, group: 0, cooldown: 0, ttl: 0}],
+        [{slot: 3, priority: 0, group: 0, cooldown: 0, ttl: 0}]
+      ]
+    },
     weapons: [
       EntityBuilder.Weapons.reverser,
       EntityBuilder.Weapons.smallGatling,

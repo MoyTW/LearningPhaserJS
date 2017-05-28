@@ -2,20 +2,20 @@
 
 var AI = {};
 
-AI.BaseAI = {};
+AI._BaseAI = {};
 
 // That's a heck of a variable name!
-AI.BaseAI.initBaseAI = function (stopApproachDistance) {
+AI._BaseAI.init_BaseAI = function (stopApproachDistance) {
   this.stopApproachDistance = stopApproachDistance;
 }
 
-AI.BaseAI.Create = function (stopApproachDistance) {
-  var o = Object.create( AI.BaseAI );
-  o.initBaseAI(stopApproachDistance);
+AI._BaseAI.Create = function (stopApproachDistance) {
+  var o = Object.create( AI._BaseAI );
+  o.init_BaseAI(stopApproachDistance);
   return o;
 }
 
-AI.BaseAI._buildPathTowards = function(owner, board, tX, tY) {
+AI._BaseAI._buildPathTowards = function(owner, board, tX, tY) {
   // I haven't yet read the closures section so I'm not sure if this is how
   // you're supposed to get the this when you're invoked from the outside call
   // site to point to the board object, other than this.
@@ -35,14 +35,14 @@ AI.BaseAI._buildPathTowards = function(owner, board, tX, tY) {
   return acc;
 }
 
-AI.BaseAI._pathTowards = function(owner, path) {
+AI._BaseAI._pathTowards = function(owner, path) {
   if (path.length > 1) {
     var next = path[1];
     owner.position.step(next[0] - owner.position.x, next[1] - owner.position.y);
   }
 }
 
-AI.BaseAI.takeTurn = function(owner, board, entityManager) {
+AI._BaseAI.takeTurn = function(owner, board, entityManager) {
   var playerPos = entityManager.findPlayer().position;
 
   // Movement
@@ -61,7 +61,7 @@ AI.BaseAI.takeTurn = function(owner, board, entityManager) {
   }
 }
 
-AI.ParameterizedAI = Object.create( AI.BaseAI );
+AI.ParameterizedAI = Object.create( AI._BaseAI );
 
 AI.ParameterizedAI.initParameterizedAI = function (aiParams) {
   this.stopApproachDistance = aiParams.stopApproachDistance;
@@ -83,7 +83,9 @@ AI.ParameterizedAI.takeTurn = function(owner, board, entityManager) {
 
   // Movement
   var path = this._buildPathTowards(owner, board, playerPos.x, playerPos.y);
-  if (!!this.moveCooldown && this.moveTTL == 0 && path.length > this.stopApproachDistance) {
+  if (!this.moveCooldown && path.length > this.stopApproachDistance) {
+    this._pathTowards(owner, path);
+  } else if (!!this.moveCooldown && this.moveTTL == 0 && path.length > this.stopApproachDistance) {
     this._pathTowards(owner, path);
     this.moveTTL = this.moveCooldown;
   } else {
