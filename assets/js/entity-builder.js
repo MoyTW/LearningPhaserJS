@@ -12,6 +12,7 @@ EntityBuilder.loadImages = function () {
   game.load.image('fighter', './assets/images/fighter.png');
   game.load.image('gunship', './assets/images/gunship.png');
   game.load.image('frigate', './assets/images/frigate.png');
+  game.load.image('destroyer', './assets/images/destroyer.png');
 }
 
 /******************************************************************************
@@ -109,6 +110,19 @@ EntityBuilder.Weapons = {
     cooldown: 0,
     spread: 3,
     numShots: 2
+  },
+
+  volleyShotgun: {
+    path: {
+      base: Pattern.LinePath,
+      params: {}
+    },
+    projImage: 'proj_shotgun',
+    damage: 1,
+    speed: 25,
+    cooldown: 0,
+    spread: 7,
+    numShots: 30
   }
 
 }
@@ -198,6 +212,27 @@ EntityBuilder.Ships = {
       EntityBuilder.Weapons.smallGatling,
       EntityBuilder.Weapons.smallCannon,
       EntityBuilder.Weapons.frigateShotgun
+    ]
+  },
+
+  Destroyer: {
+    sprite: 'destroyer',
+    speed: 300,
+    defense: 15,
+    power: 0,
+    ai: {
+      stopApproachDistance: 0,
+      weaponGroups: [
+        [
+          {slots: [0, 1], priority: 0, group: 0, cooldown: 4, ttl: 0},
+          {slots: [2], priority: 1, group: 0, cooldown: 0, ttl: 0}
+        ]
+      ]
+    },
+    weapons: [
+      EntityBuilder.Weapons.volleyShotgun,
+      EntityBuilder.Weapons.smallCannon,
+      EntityBuilder.Weapons.scoutShotgun
     ]
   },
 
