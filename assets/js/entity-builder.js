@@ -7,12 +7,14 @@ EntityBuilder.loadImages = function () {
   game.load.image('proj_gatling', './assets/images/projectiles/gatling.png');
   game.load.image('proj_cannon', './assets/images/projectiles/cannon.png');
   game.load.image('proj_reverser', './assets/images/projectiles/reverser.png');
+  game.load.image('proj_railgun', './assets/images/projectiles/railgun.png');
 
   game.load.image('scout', './assets/images/scout.png');
   game.load.image('fighter', './assets/images/fighter.png');
   game.load.image('gunship', './assets/images/gunship.png');
   game.load.image('frigate', './assets/images/frigate.png');
   game.load.image('destroyer', './assets/images/destroyer.png');
+  game.load.image('cruiser', './assets/images/cruiser.png');
 }
 
 /******************************************************************************
@@ -123,6 +125,32 @@ EntityBuilder.Weapons = {
     cooldown: 0,
     spread: 7,
     numShots: 30
+  },
+
+  flak: {
+    path: {
+      base: Pattern.LinePath,
+      params: {}
+    },
+    projImage: 'proj_shotgun',
+    damage: 1,
+    speed: 25,
+    cooldown: 0,
+    spread: 5,
+    numShots: 30
+  },
+
+  railgun: {
+    path: {
+      base: Pattern.LinePath,
+      params: {}
+    },
+    projImage: 'proj_railgun',
+    damage: 15,
+    speed: 20,
+    cooldown: 0,
+    spread: 0,
+    numShots: 1
   }
 
 }
@@ -233,6 +261,24 @@ EntityBuilder.Ships = {
       EntityBuilder.Weapons.volleyShotgun,
       EntityBuilder.Weapons.smallCannon,
       EntityBuilder.Weapons.scoutShotgun
+    ]
+  },
+
+  Cruiser: {
+    sprite: 'cruiser',
+    speed: 400,
+    defense: 10,
+    power: 0,
+    ai: {
+      stopApproachDistance: 7,
+      weaponGroups: [
+        [{slots: [0], priority: 0, group: 0, cooldown: 9, ttl: 0}]
+        [{slots: [1], priority: 0, group: 0, cooldown: 2, ttl: 0}]
+      ]
+    },
+    weapons: [
+      EntityBuilder.Weapons.flak,
+      EntityBuilder.Weapons.railgun
     ]
   },
 
