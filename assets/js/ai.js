@@ -80,9 +80,9 @@ AI.ParameterizedAI.Create = function (aiParams) {
 
 AI.ParameterizedAI.takeTurn = function(owner, board, entityManager) {
   var playerPos = entityManager.findPlayer().position;
+  var path = this._buildPathTowards(owner, board, playerPos.x, playerPos.y);
 
   // Movement
-  var path = this._buildPathTowards(owner, board, playerPos.x, playerPos.y);
   if (!this.moveCooldown && path.length > this.stopApproachDistance) {
     this._pathTowards(owner, path);
   } else if (!!this.moveCooldown && this.moveTTL == 0 && path.length > this.stopApproachDistance) {
@@ -95,7 +95,10 @@ AI.ParameterizedAI.takeTurn = function(owner, board, entityManager) {
   for (var weaponGroup of this.weaponGroups) {
     var fired = false;
     for (var weaponInfo of weaponGroup) {
-      if (!fired && weaponInfo.ttl == 0) {
+      // TODO: Figure out whether you want to have checks at the bottom or top
+      // of your parameters, and use that consistently!
+      var range = (!!weaponInfo.range) ? weaponInfo.range : 9999;
+      if (!fired && weaponInfo.ttl == 0 && path.length <= range) {
         for (var weaponSlot of weaponInfo.slots) {
           var weaponEntity = owner.equipSpace.getEquippedAt(weaponSlot);
           weaponEntity.weapon.tryFire(board, entityManager, playerPos.x, playerPos.y);

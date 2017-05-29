@@ -108,8 +108,8 @@
 + Speed: 400
 *** AI
 + If distance to player >=7, approach
-+ Attempt to fire railgun
-+ If distance to player <= 4, attempt to fire flak
++ Attempt to fire railgun (cooldown 3)
++ If distance to player <= 4, attempt to fire flak (cooldown 10)
 *** Weapons
 + Railgun
 + Small Shotgun (Flak) (spread=5, pellets=30)
@@ -122,7 +122,7 @@
 + Speed: 200
 *** AI
 + Launch Fighter
-+ If distance to player <= 4, attempt to fire flak
++ If distance to player <= 4, attempt to fire flak (cooldown 10)
 *** Weapons
 + Fighter Bay
 + Small Shotgun (Flak) (spread=5, pellets=30)

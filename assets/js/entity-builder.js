@@ -272,7 +272,7 @@ EntityBuilder.Ships = {
     ai: {
       stopApproachDistance: 7,
       weaponGroups: [
-        [{slots: [0], priority: 0, group: 0, cooldown: 9, ttl: 0}]
+        [{slots: [0], priority: 0, group: 0, cooldown: 9, ttl: 0, range: 4}],
         [{slots: [1], priority: 0, group: 0, cooldown: 2, ttl: 0}]
       ]
     },
