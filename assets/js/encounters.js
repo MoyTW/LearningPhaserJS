@@ -8,18 +8,33 @@
 
 // TODO: Carriers are yout defined!
 var Encounters = {
-  Empty: [],
-  Scout: [EntityBuilder.Ships.Scout],
-  ScoutPair: [
-    EntityBuilder.Ships.Scout,
-    EntityBuilder.Ships.Scout
-  ],
-  ScoutTrio: [
-    EntityBuilder.Ships.Scout,
-    EntityBuilder.Ships.Scout,
-    EntityBuilder.Ships.Scout
-  ],
-  Fighter: [EntityBuilder.Ships.Fighter],
+  Empty: {
+    description: 'none',
+    ships: []
+  },
+  Scout: {
+    description: 'single scout',
+    ships: [EntityBuilder.Ships.Scout]
+  },
+  ScoutPair: {
+    description: 'scout pair',
+    ships: [
+      EntityBuilder.Ships.Scout,
+      EntityBuilder.Ships.Scout
+    ]
+  },
+  ScoutTrio: {
+    description: 'scout trio',
+    ships: [
+      EntityBuilder.Ships.Scout,
+      EntityBuilder.Ships.Scout,
+      EntityBuilder.Ships.Scout
+    ]
+  },
+  Fighter: {
+    description: 'single fighter',
+    ships: [EntityBuilder.Ships.Fighter]
+  },
   FighterRecon: [
     EntityBuilder.Ships.Fighter,
     EntityBuilder.Ships.Scout,
@@ -60,3 +75,11 @@ Level1.set(Encounters.Gunship, 50);
 
 LevelsToEncounters.set(0, Level0);
 LevelsToEncounters.set(1, Level1);
+
+var rand = new Math.seedrandom('z');
+for (var i = 0; i < 30; i++) {
+  console.log(
+    Rand.randomSelection(rand,
+                         Array.from(LevelsToEncounters.get(0).keys()),
+                         Array.from(LevelsToEncounters.get(0).values())));
+}
