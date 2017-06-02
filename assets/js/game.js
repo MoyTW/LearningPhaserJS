@@ -1,33 +1,5 @@
 "use strict";
 
-// Generates a random int from min to max, inclusive
-function randomInt(seededRand, min, max) {
-  return Math.floor(seededRand() * (max - min + 1)) + min;
-}
-
-// weights must be a reducible data structure. Annoying the map iterators aren't
-// reducible by default in javascript (!?!?) so you can't actually call this on
-// the iterator provided by map.keys(). Really, js?
-function randomIndex(seededRand, weights) {
-  var selection = randomInt(seededRand, 0, weights.reduce((a, b) => a+b, 0));
-
-  var sum = 0;
-  var idx = 0;
-  for (var weight of weights) {
-    sum += weight;
-    if (selection <= sum) {
-      return idx;
-    }
-    idx++;
-  }
-}
-
-// weights must be a reducible data structure
-function randomSelection(seededRand, options, weights) {
-  var idx = randomIndex(seededRand, weights);
-  return options[idx];
-}
-
 var Game = {
 
   cursors : null,
@@ -69,10 +41,10 @@ var Game = {
     var zones = [];
     var zoneGenAttempts = 0;
     while (zoneGenAttempts < Config.MAX_ZONE_GEN_ATTEMPTS && zones.length < Config.MAX_ZONES) {
-      var width = randomInt(boardRand, Config.ZONE_MIN_SIZE, Config.ZONE_MAX_SIZE);
-      var height = randomInt(boardRand, Config.ZONE_MIN_SIZE, Config.ZONE_MAX_SIZE);
-      var x = randomInt(boardRand, 0, Config.BOARD_WIDTH - width - 1);
-      var y = randomInt(boardRand, 0, Config.BOARD_HEIGHT - height - 1);
+      var width = Rand.randomInt(boardRand, Config.ZONE_MIN_SIZE, Config.ZONE_MAX_SIZE);
+      var height = Rand.randomInt(boardRand, Config.ZONE_MIN_SIZE, Config.ZONE_MAX_SIZE);
+      var x = Rand.randomInt(boardRand, 0, Config.BOARD_WIDTH - width - 1);
+      var y = Rand.randomInt(boardRand, 0, Config.BOARD_HEIGHT - height - 1);
 
       var newZone = Level.Zone.CreateZone(x, y, width, height, zones.length);
 
