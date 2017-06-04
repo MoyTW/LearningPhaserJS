@@ -224,6 +224,7 @@ EntityBuilder.Ships = {
   Frigate: {
     sprite: 'frigate',
     speed: 250,
+    hp: 150,
     defense: 10,
     power: 3,
     ai: {
@@ -246,6 +247,7 @@ EntityBuilder.Ships = {
   Destroyer: {
     sprite: 'destroyer',
     speed: 300,
+    hp: 200,
     defense: 15,
     power: 0,
     ai: {
@@ -267,6 +269,7 @@ EntityBuilder.Ships = {
   Cruiser: {
     sprite: 'cruiser',
     speed: 400,
+    hp: 300,
     defense: 10,
     power: 0,
     ai: {
@@ -348,7 +351,7 @@ EntityBuilder.createSatellite = function (board, manager, x, y) {
 
 EntityBuilder.createProjectile = function (board, manager, weapon, x1, y1) {
   var equipper = weapon.owner.equipment.getEquipper();
-  var damage = weapon.damage + (!!equipper.fighter) ? equipper.fighter.power : 0;
+  var damage = weapon.damage + ((!!equipper.fighter) ? equipper.fighter.power : 0);
   var x0 = equipper.position.x;
   var y0 = equipper.position.y;
 

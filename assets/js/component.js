@@ -331,6 +331,10 @@ Component.ProjectileAI.prototype.takeTurn = function (board) {
  * Fighter Component *
  **************************/
 Component.Fighter = function Fighter (hp, defense, power) {
+  // I think this is what TypeScript is supposed to solve.
+  if (hp == undefined || defense == undefined || power == undefined) {
+    throw new Error('Parameter to Fighter missing!');
+  }
   // Right now, no Attribute-style class to track bonus/malus; later maybe
   this.baseMaxHP = hp;
   this.maxHP = hp;
