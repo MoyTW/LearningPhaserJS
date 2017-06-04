@@ -253,8 +253,8 @@ Component.Weapon.prototype.singleShot = function(board, entityManager, tX, tY) {
   // should change that once feature parity is reached.
   var dX, dY;
   if (this.spread > 0) {
-    dX = randomInt(this.gameRand, 0, this.spread * 2) - this.spread;
-    dY = randomInt(this.gameRand, 0, this.spread * 2) - this.spread;
+    dX = Rand.randomInt(this.gameRand, 0, this.spread * 2) - this.spread;
+    dY = Rand.randomInt(this.gameRand, 0, this.spread * 2) - this.spread;
   } else {
     dX = 0;
     dY = 0;
