@@ -66,20 +66,19 @@ Level0.set(Encounters.Scout, 50);
 Level0.set(Encounters.ScoutPair, 100);
 Level0.set(Encounters.ScoutTrio, 100);
 Level0.set(Encounters.Fighter, 50);
+LevelsToEncounters.set(0, Level0);
 
 var Level1 = new Map();
 Level1.set(Encounters.Fighter, 50);
 Level1.set(Encounters.FighterRecon, 100);
 Level1.set(Encounters.FighterPair, 100);
 Level1.set(Encounters.Gunship, 50);
-
-LevelsToEncounters.set(0, Level0);
 LevelsToEncounters.set(1, Level1);
 
-var rand = new Math.seedrandom('z');
-for (var i = 0; i < 30; i++) {
-  console.log(
-    Rand.randomSelection(rand,
-                         Array.from(LevelsToEncounters.get(0).keys()),
-                         Array.from(LevelsToEncounters.get(0).values())));
+var EncounterPicker = { };
+
+EncounterPicker.chooseEncounter = function (seededRand, level) {
+  return Rand.randomSelection(seededRand,
+                              Array.from(LevelsToEncounters.get(level).keys()),
+                              Array.from(LevelsToEncounters.get(level).values()));
 }

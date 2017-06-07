@@ -89,9 +89,16 @@ var Game = {
     game.world.setBounds(0, 0, this.board.width * 30, this.board.height * 30);
     game.camera.follow(skiffEntity.phaserSprite.sprite, Phaser.Camera.FOLLOW_LOCKON);
 
-    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 10, 10, EntityBuilder.Ships.Scout);
-    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 12, 12, EntityBuilder.Ships.Gunship);
-    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 15, 15, EntityBuilder.Ships.Fighter);
+    var encounter = EncounterPicker.chooseEncounter(this.boardRand, 0);
+    var x = 5;
+    for (var ship of encounter.ships) {
+      EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, x, 15, ship);
+      x+= 3;
+    }
+
+//    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 5, 15, EntityBuilder.Ships.Cruiser);
+//    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 5, 12, EntityBuilder.Ships.Gunship);
+//    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 15, 15, EntityBuilder.Ships.Fighter);
   },
 
   takeInput : function() {
