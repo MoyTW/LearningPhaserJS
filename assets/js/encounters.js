@@ -35,50 +35,70 @@ var Encounters = {
     description: 'single fighter',
     ships: [EntityBuilder.Ships.Fighter]
   },
-  FighterRecon: [
-    EntityBuilder.Ships.Fighter,
-    EntityBuilder.Ships.Scout,
-    EntityBuilder.Ships.Scout
-  ],
-  FighterPair: [
-    EntityBuilder.Ships.Fighter,
-    EntityBuilder.Ships.Fighter
-  ],
-  FighterFlight: [
-    EntityBuilder.Ships.Fighter,
-    EntityBuilder.Ships.Fighter,
-    EntityBuilder.Ships.Fighter,
-    EntityBuilder.Ships.Fighter
-  ],
-  Gunship: [EntityBuilder.Ships.Gunship],
-  GunshipRecon: [
-    EntityBuilder.Ships.Gunship,
-    EntityBuilder.Ships.Scout,
-    EntityBuilder.Ships.Scout
-  ],
-  Frigate: [EntityBuilder.Ships.Frigate]
+  FighterRecon: {
+    description: 'recon flight',
+    ships: [
+      EntityBuilder.Ships.Fighter,
+      EntityBuilder.Ships.Scout,
+      EntityBuilder.Ships.Scout
+    ]
+  },
+  FighterPair: {
+    description: 'fighter element',
+    ships: [
+      EntityBuilder.Ships.Fighter,
+      EntityBuilder.Ships.Fighter
+    ]
+  },
+  FighterFlight: {
+    description: 'fighter flight',
+    ships: [
+      EntityBuilder.Ships.Fighter,
+      EntityBuilder.Ships.Fighter,
+      EntityBuilder.Ships.Fighter,
+      EntityBuilder.Ships.Fighter
+    ]
+  },
+  Gunship: {
+    description: 'single gunship',
+    ships: [EntityBuilder.Ships.Gunship]
+  },
+  GunshipRecon: {
+    description: 'gunship and escorts',
+    ships: [
+      EntityBuilder.Ships.Gunship,
+      EntityBuilder.Ships.Scout,
+      EntityBuilder.Ships.Scout
+    ]
+  },
+  Frigate: {
+    description: 'single frigate',
+    ships: [EntityBuilder.Ships.Frigate]
+  }
 }
 
-var LevelsToEncounters = new Map();
-
-var Level0 = new Map();
-Level0.set(Encounters.Scout, 50);
-Level0.set(Encounters.ScoutPair, 100);
-Level0.set(Encounters.ScoutTrio, 100);
-Level0.set(Encounters.Fighter, 50);
-LevelsToEncounters.set(0, Level0);
-
-var Level1 = new Map();
-Level1.set(Encounters.Fighter, 50);
-Level1.set(Encounters.FighterRecon, 100);
-Level1.set(Encounters.FighterPair, 100);
-Level1.set(Encounters.Gunship, 50);
-LevelsToEncounters.set(1, Level1);
+// I don't really like this syntax, but there's no map literal syntax for
+// javascript! This is apparently as close as you'll get to a map literal. Ouch!
+// That's... not as good as it could be.
+var LevelsToEncounters = new Map([
+  [0, new Map([
+    [Encounters.Scout, 50],
+    [Encounters.ScoutPair, 100],
+    [Encounters.ScoutTrio, 100],
+    [Encounters.Fighter, 50]
+  ])],
+  [1, new Map([
+    [Encounters.Fighter, 50],
+    [Encounters.FighterRecon, 100],
+    [Encounters.FighterPair, 100],
+    [Encounters.Gunship, 50],
+  ])]
+]);
 
 var EncounterPicker = { };
 
 EncounterPicker.chooseEncounter = function (seededRand, level) {
-  return Rand.randomSelection(seededRand,
-                              Array.from(LevelsToEncounters.get(level).keys()),
-                              Array.from(LevelsToEncounters.get(level).values()));
+  var selections = Array.from(LevelsToEncounters.get(level).keys());
+  var weights = Array.from(LevelsToEncounters.get(level).values());
+  return Rand.randomSelection(seededRand, selections, weights);
 }
