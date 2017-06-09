@@ -59,6 +59,10 @@ var Game = {
       if (!intersects) {
         zones.push(newZone);
 
+        var encounter = EncounterPicker.chooseEncounter(boardRand, 0);
+        newZone.setEncounter(boardRand, newBoard, this.gameRand, encounter);
+
+        // These are current here just to mark boundaries
         EntityBuilder.createSatellite(newBoard, this.manager, x, y);
         EntityBuilder.createSatellite(newBoard, this.manager, x + width, y);
         EntityBuilder.createSatellite(newBoard, this.manager, x, y + height);
@@ -89,16 +93,7 @@ var Game = {
     game.world.setBounds(0, 0, this.board.width * 30, this.board.height * 30);
     game.camera.follow(skiffEntity.phaserSprite.sprite, Phaser.Camera.FOLLOW_LOCKON);
 
-    var encounter = EncounterPicker.chooseEncounter(this.boardRand, 0);
-    var x = 5;
-    for (var ship of encounter.ships) {
-      EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, x, 15, ship);
-      x+= 3;
-    }
-
 //    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 5, 15, EntityBuilder.Ships.Cruiser);
-//    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 5, 12, EntityBuilder.Ships.Gunship);
-//    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 15, 15, EntityBuilder.Ships.Fighter);
   },
 
   takeInput : function() {

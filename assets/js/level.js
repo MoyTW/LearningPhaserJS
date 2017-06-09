@@ -57,6 +57,35 @@ Level.Zone.intersects = function (otherZone) {
     this.y1 <= otherZone.y2 && this.y2 >= otherZone.y1;
 }
 
+Level.Zone.randomCoordinates = function (seededRand) {
+  var x = Rand.randomInt(seededRand, this.x1 + 1, this.x2 - 1);
+  var y = Rand.randomInt(seededRand, this.y1 + 1, this.y2 - 1);
+  return [x, y];
+}
+
+Level.Zone.randomEmptyCoordinates = function (seededRand, board) {
+  var coordinates = this.randomCoordinates(seededRand);
+  while (!board.isPassable(coordinates[0], coordinates[1])) {
+    coodinates = this.randomCoordinates(seededRand);
+  }
+  return coordinates;
+}
+
+// TODO: Maybe put this into the init?
+Level.Zone.setEncounter = function (boardRand, board, gameRand, encounter) {
+  if (this.encounter != undefined) {
+    throw new Error('Cannot double-set encounter for zone!');
+  }
+
+  // TODO: init!
+  this.encounter = encounter;
+  for (var ship of encounter.ships) {
+    var coordinates = this.randomEmptyCoordinates(boardRand, board);
+    // TODO: iffy 'private' access?
+    EntityBuilder.createShipEntity(board, board._entityManager, gameRand, coordinates[0], coordinates[1], ship);
+  }
+}
+
 
 /*********
  * Board *
