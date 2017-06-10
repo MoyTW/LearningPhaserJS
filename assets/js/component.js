@@ -26,11 +26,11 @@ Component.Position.prototype.asArray = function () {
   return [this.x, this.y];
 }
 
-Component.Position.prototype.distanceTo = function (entity) {
-  return this.distanceTo(entity.position.x, entity.position.y);
+Component.Position.prototype.distanceToEntity = function (entity) {
+  return this.distanceToCoordinates(entity.position.x, entity.position.y);
 }
 
-Component.Position.prototype.distanceTo = function (x, y) {
+Component.Position.prototype.distanceToCoordinates = function (x, y) {
   var dx = this.x - x;
   var dy = this.y - y;
   return Math.sqrt(dx * dx + dy * dy);

@@ -5,6 +5,11 @@ var AI = {};
 AI.ParameterizedAI = {};
 
 AI.ParameterizedAI.initParameterizedAI = function (aiParams) {
+  if (!aiParams.activationRadius) {
+    throw new Error('activation radius required!');
+  }
+  this.isActive = (!!aiParams.isActive) ? aiParams.isActive : false;
+  this.activationRadius = aiParams.activationRadius;
   this.stopApproachDistance = aiParams.stopApproachDistance;
   this.weaponGroups = aiParams.weaponGroups;
   if (aiParams.moveCooldown) {
@@ -47,6 +52,15 @@ AI.ParameterizedAI._buildPathTowards = function(owner, board, tX, tY) {
 }
 
 AI.ParameterizedAI.takeTurn = function(owner, board, entityManager) {
+  var playerPos = entityManager.findPlayer().position;
+
+  if (!this.isActive) {
+    if (playerPos.distanceToEntity(owner) <= this.activationRadius) {
+      this.isActive = true;
+    }
+    return;
+  }
+
   var playerPos = entityManager.findPlayer().position;
   var path = this._buildPathTowards(owner, board, playerPos.x, playerPos.y);
 

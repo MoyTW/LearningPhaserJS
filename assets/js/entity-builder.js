@@ -168,6 +168,8 @@ EntityBuilder.createWeaponEntity = function (manager, gameRand, blueprint) {
 /******************************************************************************
  *                                   SHIPS                                    *
  ******************************************************************************/
+var ACTIVATION_RADIUS = 12;
+
 EntityBuilder.Ships = {
   Scout: {
     sprite: 'scout',
@@ -176,6 +178,7 @@ EntityBuilder.Ships = {
     defense: 0,
     power: 2,
     ai: {
+      activationRadius: ACTIVATION_RADIUS,
       stopApproachDistance: 5,
       weaponGroups: [[{slots: [0], priority: 0, group: 0, cooldown: 0, ttl: 0}]]
     },
@@ -189,6 +192,7 @@ EntityBuilder.Ships = {
     defense: 0,
     power: 0,
     ai: {
+      activationRadius: ACTIVATION_RADIUS,
       stopApproachDistance: 0,
       weaponGroups: [[{slots: [0, 1, 2], priority: 0, group: 0, cooldown: 0, ttl: 0}]]
     },
@@ -206,6 +210,7 @@ EntityBuilder.Ships = {
     defense: 4,
     power: 3,
     ai: {
+      activationRadius: ACTIVATION_RADIUS,
       stopApproachDistance: 5,
       moveCooldown: 1,
       weaponGroups: [
@@ -228,6 +233,7 @@ EntityBuilder.Ships = {
     defense: 10,
     power: 3,
     ai: {
+      activationRadius: ACTIVATION_RADIUS,
       stopApproachDistance: 0,
       weaponGroups: [
         [
@@ -251,6 +257,7 @@ EntityBuilder.Ships = {
     defense: 15,
     power: 0,
     ai: {
+      activationRadius: ACTIVATION_RADIUS,
       stopApproachDistance: 0,
       weaponGroups: [
         [
@@ -273,6 +280,7 @@ EntityBuilder.Ships = {
     defense: 10,
     power: 0,
     ai: {
+      activationRadius: ACTIVATION_RADIUS,
       stopApproachDistance: 7,
       weaponGroups: [
         [{slots: [0], priority: 0, group: 0, cooldown: 9, ttl: 0, range: 4}],
