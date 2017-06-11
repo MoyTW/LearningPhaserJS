@@ -119,30 +119,58 @@ var Game = {
 //    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 5, 15, EntityBuilder.Ships.Cruiser);
   },
 
+  executeMove : function (dx, dy) {
+    this.lastInput = game.time.now;
+    var cmd = Command.CreateMoveCommand(this.board, this.manager, dx, dy);
+    var player = this.manager.findPlayer();
+    return player.player.executeCommand(cmd);
+  },
+
   takeInput : function() {
-    if (game.time.now < this.lastInput + 100) {
+    var lastKey = game.input.keyboard.lastKey;
+    if (game.time.now < this.lastInput + 100 || lastKey == undefined || !lastKey.isDown) {
       return false;
     }
-    var player = this.manager.findPlayer();
 
-    if (this.cursors.up.isDown) {
-      this.lastInput = game.time.now;
-      var cmd = Command.CreateMoveCommand(this.board, this.manager, 0, -1);
-      return player.player.executeCommand(cmd);
-    } else if (this.cursors.right.isDown) {
-      this.lastInput = game.time.now;
-      var cmd = Command.CreateMoveCommand(this.board, this.manager, 1, 0);
-      return player.player.executeCommand(cmd);
-    } else if (this.cursors.down.isDown) {
-      this.lastInput = game.time.now;
-      var cmd = Command.CreateMoveCommand(this.board, this.manager, 0, 1);
-      return player.player.executeCommand(cmd);
-    } else if (this.cursors.left.isDown) {
-      this.lastInput = game.time.now;
-      var cmd = Command.CreateMoveCommand(this.board, this.manager, -1, 0);
-      return player.player.executeCommand(cmd);
-    } else {
-      return false;
+    switch (lastKey.keyCode) {
+      case Phaser.KeyCode.UP:
+      case Phaser.KeyCode.NUMPAD_8:
+      case Phaser.KeyCode.K:
+        return this.executeMove(0, -1);
+
+      case Phaser.KeyCode.NUMPAD_9:
+      case Phaser.KeyCode.U:
+        return this.executeMove(1, -1);
+
+      case Phaser.KeyCode.RIGHT:
+      case Phaser.KeyCode.NUMPAD_6:
+      case Phaser.KeyCode.L:
+        return this.executeMove(1, 0);
+
+      case Phaser.KeyCode.NUMPAD_3:
+      case Phaser.KeyCode.N:
+        return this.executeMove(1, 1);
+
+      case Phaser.KeyCode.NUMPAD_2:
+      case Phaser.KeyCode.DOWN:
+      case Phaser.KeyCode.J:
+        return this.executeMove(0, 1);
+
+      case Phaser.KeyCode.NUMPAD_1:
+      case Phaser.KeyCode.B:
+        return this.executeMove(-1, 1);
+
+      case Phaser.KeyCode.NUMPAD_4:
+      case Phaser.KeyCode.LEFT:
+      case Phaser.KeyCode.H:
+        return this.executeMove(-1, 0);
+
+      case Phaser.KeyCode.NUMPAD_7:
+      case Phaser.KeyCode.Y:
+        return this.executeMove(-1, -1);
+
+      default:
+        return false;
     }
   },
 
