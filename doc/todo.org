@@ -1,0 +1,26 @@
+* TODO Features
+** Levels & Stairs
+*** Stairs Entity placement and functionality
++ Create stairs entity
++ Place stairs entity
++ Allow usage of stairs entity to move to next level
+*** Intel Item gives intel on next level
+** Zone Listing dialogue
+*** Name of zone
+*** Ships in zone
+*** Items in zone
+** Autopilot To Zone
+** Item Entities
+*** Item Entities placed in Zones
+*** Item Entities listed in Zone list
+** Player Advancement
+*** Enemy XP Values
+*** Player Level-Up Dialogue
+** Player Inventory
+*** Take Item
+*** Drop Item
+*** Use Item
+** Victory Condition
+** Combat Log
+** Fog of War & LOS
+* DONE Features
