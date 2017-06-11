@@ -23,23 +23,10 @@ var Game = {
     EntityBuilder.loadImages();
   },
 
-  buildNewBoard : function (manager, boardRand) {
-    var newBoard = Level.Board.CreateEmptyBoard(manager,
-                                                Config.BOARD_WIDTH,
-                                                Config.BOARD_HEIGHT);
-
-    for (var x = 0; x < newBoard.width; x++) {
-      for (var y = 0; y < newBoard.height; y++) {
-        if (!newBoard.isPassable(x, y)) {
-          var sprite = game.add.sprite(x, y, 'light_gray_square');
-          sprite.x = x * 30;
-          sprite.y = y * 30;
-        }
-      }
-    }
-
+  placeEmptyZones : function (manager, boardRand, newBoard) {
     var zones = [];
     var zoneGenAttempts = 0;
+
     while (zoneGenAttempts < Config.MAX_ZONE_GEN_ATTEMPTS && zones.length < Config.MAX_ZONES) {
       var width = Rand.randomInt(boardRand, Config.ZONE_MIN_SIZE, Config.ZONE_MAX_SIZE);
       var height = Rand.randomInt(boardRand, Config.ZONE_MIN_SIZE, Config.ZONE_MAX_SIZE);
@@ -59,9 +46,6 @@ var Game = {
       if (!intersects) {
         zones.push(newZone);
 
-        var encounter = EncounterPicker.chooseEncounter(boardRand, 0);
-        newZone.setEncounter(boardRand, newBoard, this.gameRand, encounter);
-
         // These are current here just to mark boundaries
         EntityBuilder.createSatellite(newBoard, this.manager, x, y);
         EntityBuilder.createSatellite(newBoard, this.manager, x + width, y);
@@ -70,6 +54,34 @@ var Game = {
       }
 
       zoneGenAttempts++;
+    }
+
+    return zones;
+  },
+
+  buildNewBoard : function (manager, boardRand) {
+    var newBoard = Level.Board.CreateEmptyBoard(manager,
+                                                Config.BOARD_WIDTH,
+                                                Config.BOARD_HEIGHT);
+
+    // Create sprites for the edges of the zone
+    for (var x = 0; x < newBoard.width; x++) {
+      for (var y = 0; y < newBoard.height; y++) {
+        if (!newBoard.isPassable(x, y)) {
+          var sprite = game.add.sprite(x, y, 'light_gray_square');
+          sprite.x = x * 30;
+          sprite.y = y * 30;
+        }
+      }
+    }
+
+    // Generate empty zones
+    var zones = Game.placeEmptyZones(manager, boardRand, newBoard);
+
+    // Add encounters to zones
+    for (var i = 0; i < zones.length; i++) {
+      var encounter = EncounterPicker.chooseEncounter(boardRand, 0);
+      zones[i].setEncounter(boardRand, newBoard, this.gameRand, encounter);
     }
 
     return newBoard;
