@@ -30,8 +30,8 @@ var Game = {
     while (zoneGenAttempts < Config.MAX_ZONE_GEN_ATTEMPTS && zones.length < Config.MAX_ZONES) {
       var width = Rand.randomInt(boardRand, Config.ZONE_MIN_SIZE, Config.ZONE_MAX_SIZE);
       var height = Rand.randomInt(boardRand, Config.ZONE_MIN_SIZE, Config.ZONE_MAX_SIZE);
-      var x = Rand.randomInt(boardRand, 0, Config.BOARD_WIDTH - width - 1);
-      var y = Rand.randomInt(boardRand, 0, Config.BOARD_HEIGHT - height - 1);
+      var x = Rand.randomInt(boardRand, 1, Config.BOARD_WIDTH - width - 2);
+      var y = Rand.randomInt(boardRand, 1, Config.BOARD_HEIGHT - height - 2);
 
       var newZone = Level.Zone.CreateZone(x, y, width, height, zones.length);
 
@@ -64,7 +64,7 @@ var Game = {
                                                 Config.BOARD_WIDTH,
                                                 Config.BOARD_HEIGHT);
 
-    // Create sprites for the edges of the zone
+    // Create sprites for the edges of the board
     for (var x = 0; x < newBoard.width; x++) {
       for (var y = 0; y < newBoard.height; y++) {
         if (!newBoard.isPassable(x, y)) {
