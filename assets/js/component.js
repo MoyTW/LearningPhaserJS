@@ -80,10 +80,16 @@ Component.Position.prototype.step = function(x, y) {
 /**************************
  * PhaserSprite Component *
  **************************/
-Component.PhaserSprite = function PhaserSprite (x, y, spriteName) {
+Component.PhaserSprite = function PhaserSprite (x, y, spriteName, foreground) {
   this.sprite = game.add.sprite(x * 30, y * 30, spriteName);
   this.sprite.width = 30;
   this.sprite.height = 30;
+
+  if (foreground == undefined && foreground) {
+    this.sprite.bringToTop();
+  } else {
+    this.sprite.sendToBack();
+  }
 };
 
 Component.PhaserSprite.prototype.cleanup = function () {
@@ -387,3 +393,9 @@ Component.Destroyable.prototype.notifyDestroyed = function () {
   if (this.onDestroyedCallback) { this.onDestroyedCallback(); }
   this._entityManager.removeEntity(this.owner);
 }
+
+
+/***********************
+ * JumpPoint Component *
+ ***********************/
+Component.JumpPoint = function JumpPoint () {}

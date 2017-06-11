@@ -90,6 +90,11 @@ var Game = {
       zones[i].setEncounter(boardRand, newBoard, this.gameRand, encounter);
     }
 
+    // Add Jump Point to any non-zero zone
+    var jumpZone = Rand.randomInt(boardRand, 1, zones.length - 1);
+    var jumpCoordinates = zones[jumpZone].randomEmptyCoordinates(boardRand, newBoard);
+    EntityBuilder.createJumpPoint(newBoard, manager, jumpCoordinates[0], jumpCoordinates[1]);
+
     return newBoard;
   },
 

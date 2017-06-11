@@ -15,6 +15,8 @@ EntityBuilder.loadImages = function () {
   game.load.image('frigate', './assets/images/frigate.png');
   game.load.image('destroyer', './assets/images/destroyer.png');
   game.load.image('cruiser', './assets/images/cruiser.png');
+
+  game.load.image('jump_point', './assets/images/jump_point.png');
 }
 
 /******************************************************************************
@@ -346,6 +348,16 @@ EntityBuilder.createShipEntity = function (board, manager, gameRand, x, y, param
 /******************************************************************************
  *                            OTHER MAP ENTITIES                              *
  ******************************************************************************/
+EntityBuilder.createJumpPoint = function (board, manager, x, y) {
+  var created = manager.createEntity();
+
+  manager.addComponent(created, Component.Position.bind(null, board, x, y, false));
+  manager.addComponent(created, Component.PhaserSprite.bind(null, x, y, 'jump_point', false));
+  manager.addComponent(created, Component.JumpPoint);
+
+  return created;
+}
+
 EntityBuilder.createSatellite = function (board, manager, x, y) {
   var satellite = manager.createEntity();
 
