@@ -66,7 +66,7 @@ Level.Zone.randomCoordinates = function (seededRand) {
 Level.Zone.randomEmptyCoordinates = function (seededRand, board) {
   var coordinates = this.randomCoordinates(seededRand);
   while (!board.isPassable(coordinates[0], coordinates[1])) {
-    coodinates = this.randomCoordinates(seededRand);
+    coordinates = this.randomCoordinates(seededRand);
   }
   return coordinates;
 }
