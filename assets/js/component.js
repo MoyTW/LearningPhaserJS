@@ -26,6 +26,12 @@ Component.Position.prototype.asArray = function () {
   return [this.x, this.y];
 }
 
+Component.Position.prototype.setCoordinates = function (coordinates) {
+  this.x = coordinates[0];
+  this.y = coordinates[1];
+  this.tryUpdateRenderPosition();
+}
+
 Component.Position.prototype.distanceToEntity = function (entity) {
   return this.distanceToCoordinates(entity.position.x, entity.position.y);
 }
@@ -34,6 +40,21 @@ Component.Position.prototype.distanceToCoordinates = function (x, y) {
   var dx = this.x - x;
   var dy = this.y - y;
   return Math.sqrt(dx * dx + dy * dy);
+}
+
+Component.Position.prototype.tryUpdateRenderPosition = function () {
+    // I'd prefer some way of tying the render position to the logical position
+    // which is - well, not quite as stateful as this? I might want to go have a
+    // look at the documentation. In my previous Python implementation there was
+    // a render step where I myself derived the x/y of the rendered tile on
+    // every call, but the examples Phaser shows don't follow that approach.
+    //
+    // Also this will probably change drastically when the camera enters the
+    // equation!
+    if (!!this.owner.phaserSprite) {
+      this.owner.phaserSprite.sprite.x = this.x * 30;
+      this.owner.phaserSprite.sprite.y = this.y * 30;
+    }
 }
 
 Component.Position.prototype.step = function(x, y) {
@@ -47,18 +68,7 @@ Component.Position.prototype.step = function(x, y) {
     this.x = nX;
     this.y = nY;
 
-    // I'd prefer some way of tying the render position to the logical position
-    // which is - well, not quite as stateful as this? I might want to go have a
-    // look at the documentation. In my previous Python implementation there was
-    // a render step where I myself derived the x/y of the rendered tile on
-    // every call, but the examples Phaser shows don't follow that approach.
-    //
-    // Also this will probably change drastically when the camera enters the
-    // equation!
-    if (!!this.owner.phaserSprite) {
-      this.owner.phaserSprite.sprite.x = this.x * 30;
-      this.owner.phaserSprite.sprite.y = this.y * 30;
-    }
+    this.tryUpdateRenderPosition();
 
     return true;
   } else {

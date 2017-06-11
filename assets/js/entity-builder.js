@@ -305,7 +305,7 @@ EntityBuilder.Ships = {
   }
 }
 
-EntityBuilder.createShipEntity = function (board, manager, gameRand, x, y, params) {
+EntityBuilder.createNoPositionShipEntity = function (board, manager, gameRand, params) {
   var created = manager.createEntity();
 
   // I'm not super fond of having 'driver' be a Constructor function, as opposed
@@ -321,8 +321,7 @@ EntityBuilder.createShipEntity = function (board, manager, gameRand, x, y, param
   }
 
   manager.addComponent(created, Component.Actor.bind(null, params.speed));
-  manager.addComponent(created, Component.Position.bind(null, board, x, y));
-  manager.addComponent(created, Component.PhaserSprite.bind(null, x, y, params.sprite));
+  manager.addComponent(created, Component.PhaserSprite.bind(null, -1, -1, params.sprite));
   manager.addComponent(created, Component.Fighter.bind(null, params.hp, params.defense, params.power));
   manager.addComponent(created, Component.EquipSpace);
   manager.addComponent(created, Component.Destroyable.bind(null, manager, params.onDestroyedCallback));
@@ -331,6 +330,14 @@ EntityBuilder.createShipEntity = function (board, manager, gameRand, x, y, param
       created.equipSpace.equip(EntityBuilder.createWeaponEntity(manager, gameRand, weapon));
     }
   }
+
+  return created;
+}
+
+EntityBuilder.createShipEntity = function (board, manager, gameRand, x, y, params) {
+  var created = EntityBuilder.createNoPositionShipEntity(board, manager, gameRand, params);
+
+  manager.addComponent(created, Component.Position.bind(null, board, x, y));
 
   return created;
 }

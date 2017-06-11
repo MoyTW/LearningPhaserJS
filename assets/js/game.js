@@ -78,8 +78,14 @@ var Game = {
     // Generate empty zones
     var zones = Game.placeEmptyZones(manager, boardRand, newBoard);
 
+    // Place the player in the first zone
+    var player = this.manager.findPlayer();
+    var center = zones[0].center;
+    manager.addComponent(player, Component.Position.bind(null, newBoard, 0, 0));
+    player.position.setCoordinates(center);
+
     // Add encounters to zones
-    for (var i = 0; i < zones.length; i++) {
+    for (var i = 1; i < zones.length; i++) {
       var encounter = EncounterPicker.chooseEncounter(boardRand, 0);
       zones[i].setEncounter(boardRand, newBoard, this.gameRand, encounter);
     }
@@ -97,9 +103,9 @@ var Game = {
     window.graphics = game.add.graphics(0, 0);
 
     this.manager = ECS.EntityManager.Create();
-    this.board = this.buildNewBoard(this.manager, this.boardRand);
+    var skiffEntity = EntityBuilder.createNoPositionShipEntity(this.board, this.manager, this.gameRand, EntityBuilder.Ships.PlayerSkiff);
 
-    var skiffEntity = EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 5, 5, EntityBuilder.Ships.PlayerSkiff);
+    this.board = this.buildNewBoard(this.manager, this.boardRand);
 
     // Follow the skiff
     game.world.setBounds(0, 0, this.board.width * 30, this.board.height * 30);

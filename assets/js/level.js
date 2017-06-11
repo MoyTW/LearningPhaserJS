@@ -43,6 +43,8 @@ Level.Zone.initZone = function (x, y, width, height, name) {
   this.width = width;
   this.height = height;
 
+  this.center = [(this.x1 + this.x2) / 2, (this.y1 + this.y2) / 2]
+
   this.name = "Zone " + name;
 }
 
