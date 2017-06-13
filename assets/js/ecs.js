@@ -136,8 +136,9 @@ ECS.EntityManager.removeTag = function (entity, tag) {
   if (this._tags[tag]) {
     var entities = this._tags[tag];
 
-    entities.delete(entity);
-    entity._tags.delete(tag);
+    if (!entities.delete(entity) || !entity._tags.delete(tag)) {
+      throw new Error('Cannot delete non-existing tag!');
+    }
 
     if (entities.size == 0) {
       delete this._tags[tag];
