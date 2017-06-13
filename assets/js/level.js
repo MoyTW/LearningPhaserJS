@@ -206,10 +206,12 @@ Level.Board.isPassable = function (x, y) {
   return this.isTerrainPassable(x, y) && !this.isTileOccupied(x, y);
 }
 
-Level.Board.notifyAdded = function (entity, position) {
-  this._entityManager.addTag(entity, position);
+Level.Board.notifyAdded = function (entity) {
+  this._entityManager.addTag(entity, entity.position.getCurrentCoordinates());
 }
 
-Level.Board.notifyMoved = function (entity, lastPosition, nextPosition) {
-  this._entityManager.replaceTag(entity, lastPosition, nextPosition);
+Level.Board.notifyMoved = function (entity) {
+  this._entityManager.replaceTag(entity,
+                                 entity.position.getLastCoordinates(),
+                                 entity.position.getCurrentCoordinates());
 }

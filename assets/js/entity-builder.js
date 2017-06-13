@@ -379,8 +379,10 @@ EntityBuilder.createSatellite = function (board, manager, x, y) {
 EntityBuilder.createProjectile = function (board, manager, weapon, x1, y1) {
   var equipper = weapon.owner.equipment.getEquipper();
   var damage = weapon.damage + ((!!equipper.fighter) ? equipper.fighter.power : 0);
-  var x0 = equipper.position.x;
-  var y0 = equipper.position.y;
+  // Should upgrade me browser
+  var coordinates = equipper.position.getCurrentPosition();
+  var x0 = coordinates[0];
+  var y0 = coordinates[1];
 
   var projectile = manager.createEntity();
 

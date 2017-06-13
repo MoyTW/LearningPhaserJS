@@ -7,8 +7,8 @@ var Component = Component || {}
  **********************/
 Component.Position = function Position (board, x, y, blocksMovement) {
   this._board = board;
-  this.x = x;
-  this.y = y;
+  this._x = x;
+  this._y = y;
 
   // Can use assignment in function def in v6, but my browser doesn't support.
   if (blocksMovement == undefined) {
@@ -16,29 +16,45 @@ Component.Position = function Position (board, x, y, blocksMovement) {
   } else {
     this.blocksMovement = blocksMovement;
   }
+
+  this._currentCoordinates = [this._x, this._y];
+  this._lastCoordinates = this._currentCoordinates;
 };
 
 Component.Position.prototype.postAddComponent = function () {
-  this._board.notifyAdded(this.owner, this.asArray());
+  this._board.notifyAdded(this.owner, this.getCurrentCoordinates());
 }
 
-Component.Position.prototype.asArray = function () {
-  return [this.x, this.y];
+// TODO: Update to newer js, and use destructuring instead of this!
+Component.Position.prototype.getX = function () {
+  return this._x;
+}
+
+// TODO: Update to newer js, and use destructuring instead of this!
+Component.Position.prototype.getY = function () {
+  return this._y;
+}
+
+Component.Position.prototype.getCurrentCoordinates = function () {
+  return this._currentCoordinates;
+}
+
+Component.Position.prototype.getLastCoordinates = function () {
+  return this._lastCoordinates;
 }
 
 Component.Position.prototype.setCoordinates = function (coordinates) {
-  this.x = coordinates[0];
-  this.y = coordinates[1];
+  this._x = coordinates[0];
+  this._y = coordinates[1];
+  this._lastCoordinates = this._currentCoordinates;
+  this._currentCoordinates = [this._x, this._y];
   this.tryUpdateRenderPosition();
 }
 
 Component.Position.prototype.distanceToEntity = function (entity) {
-  return this.distanceToCoordinates(entity.position.x, entity.position.y);
-}
-
-Component.Position.prototype.distanceToCoordinates = function (x, y) {
-  var dx = this.x - x;
-  var dy = this.y - y;
+  var targetCoordinates = entity.position.getCurrentCoordinates();
+  var dx = this._x - targetCoordinates[0];
+  var dy = this._y - targetCoordinates[1];
   return Math.sqrt(dx * dx + dy * dy);
 }
 
@@ -52,8 +68,8 @@ Component.Position.prototype.tryUpdateRenderPosition = function () {
     // Also this will probably change drastically when the camera enters the
     // equation!
     if (!!this.owner.phaserSprite) {
-      this.owner.phaserSprite.sprite.x = this.x * 30;
-      this.owner.phaserSprite.sprite.y = this.y * 30;
+      this.owner.phaserSprite.sprite.x = this._x * 30;
+      this.owner.phaserSprite.sprite.y = this._y * 30;
     }
 }
 
@@ -61,14 +77,13 @@ Component.Position.prototype.step = function(x, y) {
   if (! (-1 <= x <= 1) || ! (-1 <= y <= 1)) {
     throw new Error('You cannot step more than one square');
   }
-  var nX = this.x + x;
-  var nY = this.y + y;
+  var nX = this._x + x;
+  var nY = this._y + y;
   if (this._board.isPassable(nX, nY)) {
-    this._board.notifyMoved(this.owner, [this.x, this.y], [nX, nY]);
-    this.x = nX;
-    this.y = nY;
+    this.setCoordinates([nX, nY]);
 
     this.tryUpdateRenderPosition();
+    this._board.notifyMoved(this.owner);
 
     return true;
   } else {
@@ -161,7 +176,7 @@ Component.Player.prototype.executeCommand = function(command) {
     // Add in an attack here
     this.owner.position.step(command.dx, command.dy);
 
-    var inRadius = command.board.occupiersInRadius(this.owner.position.asArray(),
+    var inRadius = command.board.occupiersInRadius(this.owner.position.getCurrentCoordinates(),
                                                    5,
                                                    true);
     var foesInRadius = [...inRadius].filter(e => e.hasComponent(Component.FoeAI));
@@ -175,10 +190,11 @@ Component.Player.prototype.executeCommand = function(command) {
 
       for (var e of this.owner.equipSpace.getEquipped()) {
         if (!!e.weapon) {
+          var foeCoordinates = foe.position.getCurrentCoordinates();
           e.weapon.tryFire(command.board,
                            command.manager,
-                           foe.position.x,
-                           foe.position.y);
+                           foeCoordinates,
+                           foeCoordinates);
         }
       }
     }

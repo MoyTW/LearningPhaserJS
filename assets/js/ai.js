@@ -27,7 +27,7 @@ AI.ParameterizedAI.Create = function (aiParams) {
 AI.ParameterizedAI._pathTowards = function(owner, path) {
   if (path.length > 1) {
     var next = path[1];
-    owner.position.step(next[0] - owner.position.x, next[1] - owner.position.y);
+    owner.position.step(next[0] - owner.position.getX(), next[1] - owner.position.getY());
   }
 }
 
@@ -46,7 +46,7 @@ AI.ParameterizedAI._buildPathTowards = function(owner, board, tX, tY) {
   var astar = new ROT.Path.AStar(tX, tY, board.isTerrainPassable.bind(board));
   var acc = [];
   var accFn = function(nX, nY) { acc.push([nX, nY]); }
-  astar.compute(owner.position.x, owner.position.y, accFn);
+  astar.compute(owner.position.getX(), owner.position.getY(), accFn);
 
   return acc;
 }
@@ -61,8 +61,7 @@ AI.ParameterizedAI.takeTurn = function(owner, board, entityManager) {
     return;
   }
 
-  var playerPos = entityManager.findPlayer().position;
-  var path = this._buildPathTowards(owner, board, playerPos.x, playerPos.y);
+  var path = this._buildPathTowards(owner, board, playerPos.getX(), playerPos.getY());
 
   // Movement
   if (!this.moveCooldown && path.length > this.stopApproachDistance) {
@@ -83,7 +82,7 @@ AI.ParameterizedAI.takeTurn = function(owner, board, entityManager) {
       if (!fired && weaponInfo.ttl == 0 && path.length <= range) {
         for (var weaponSlot of weaponInfo.slots) {
           var weaponEntity = owner.equipSpace.getEquippedAt(weaponSlot);
-          weaponEntity.weapon.tryFire(board, entityManager, playerPos.x, playerPos.y);
+          weaponEntity.weapon.tryFire(board, entityManager, playerPos.getX(), playerPos.getY());
           weaponInfo.ttl = weaponInfo.cooldown;
           fired = true;
         }
