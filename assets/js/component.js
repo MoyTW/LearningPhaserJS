@@ -48,6 +48,7 @@ Component.Position.prototype.setCoordinates = function (coordinates) {
   this._y = coordinates[1];
   this._lastCoordinates = this._currentCoordinates;
   this._currentCoordinates = [this._x, this._y];
+  this._board.notifyMoved(this.owner);
   this.tryUpdateRenderPosition();
 }
 
@@ -83,7 +84,6 @@ Component.Position.prototype.step = function(x, y) {
     this.setCoordinates([nX, nY]);
 
     this.tryUpdateRenderPosition();
-    this._board.notifyMoved(this.owner);
 
     return true;
   } else {
