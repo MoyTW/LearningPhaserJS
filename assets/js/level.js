@@ -142,13 +142,17 @@ Level.Board.tileOccupiers = function (position, onlyCollidables) {
     // Lord but I *really* wanted to use a filter here, like Clojure has taught
     // me, but SURPRISE! Javascript only implements it for arrays. No filter for
     // Sets! Well, I mean, not natively. I'm disappointed by this.
-    var e;
-    for (e of entities) {
-      if (e.hasComponent(Component.Position) && !e.position.blocksMovement) {
-        entities.delete(e);
+    //
+    // Also remember that entities is *stateful*! EVERYTHING is stateful!
+    // Argh. Never know how much ya miss immutability 'till ya try to work
+    // without it...
+    var collidables = new Set();
+    for (var e of entities) {
+      if (e.hasComponent(Component.Position) && e.position.blocksMovement) {
+        collidables.add(e);
       }
     }
-    return entities;
+    return collidables;
   } else {
     return entities || new Set();
   }

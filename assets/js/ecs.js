@@ -127,14 +127,11 @@ ECS.EntityManager.findByTag = function (tag) {
 ECS.EntityManager.addTag = function (entity, tag) {
   if (typeof tag != 'string') { throw new Error('Tags must be strings!'); }
 
-  var matchingEntities = this._tags.get(tag);
-
-  if (!matchingEntities) {
+  if (!this._tags.has(tag)) {
     this._tags.set(tag, new Set());
-    matchingEntities = this._tags.get(tag);
   }
 
-  matchingEntities.add(entity);
+  this._tags.get(tag).add(entity);
   entity._tags.add(tag);
 }
 
