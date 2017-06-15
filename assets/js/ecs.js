@@ -39,7 +39,7 @@ ECS.EntityManager.Create = function() {
   var em = Object.create( ECS.EntityManager );
 
   em._entities = [];
-  em._tags = {};
+  em._tags = new Map();
 
   return em;
 }
@@ -121,16 +121,18 @@ ECS.EntityManager.findByComponent = function(TComponent) {
 ECS.EntityManager.findByTag = function (tag) {
   if (typeof tag != 'string') { throw new Error('Tags must be strings!'); }
 
-  return this._tags[tag];
+  return this._tags.get(tag);
 }
 
 ECS.EntityManager.addTag = function (entity, tag) {
   if (typeof tag != 'string') { throw new Error('Tags must be strings!'); }
 
-  var matchingEntities = this._tags[tag];
+  var matchingEntities = this._tags.get(tag);
 
-  // Nifty, didn't know assignment worked like this.
-  if (!matchingEntities) matchingEntities = this._tags[tag] = new Set();
+  if (!matchingEntities) {
+    this._tags.set(tag, new Set());
+    matchingEntities = this._tags.get(tag);
+  }
 
   matchingEntities.add(entity);
   entity._tags.add(tag);
@@ -139,17 +141,17 @@ ECS.EntityManager.addTag = function (entity, tag) {
 ECS.EntityManager.removeTag = function (entity, tag) {
   if (typeof tag != 'string') { throw new Error('Tags must be strings!'); }
 
-  if (this._tags[tag]) {
-    var entities = this._tags[tag];
+  var entities = this._tags.get(tag);
 
-    if (!entities.delete(entity) || !entity._tags.delete(tag)) {
-      throw new Error('Cannot delete non-existing tag!');
-    }
+  if (!entities.delete(entity)) {
+    throw new Error('Cannot delete non-existing tag from EntityManager tags!');
+  }
+  if (!entity._tags.delete(tag)) {
+    throw new Error('Cannot delete non-existing tag from Entity!');
+  }
 
-    if (entities.size == 0) {
-      delete this._tags[tag];
-    }
-
+  if (entities.size == 0) {
+    this._tags.delete(tag);
   }
 }
 

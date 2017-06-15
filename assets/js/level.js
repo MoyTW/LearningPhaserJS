@@ -124,7 +124,7 @@ Level.Board.isEdge= function (x, y) {
 }
 
 Level.Board.isTileOccupied = function (x, y) {
-  var occupiers = this._entityManager.findByTag([x, y]);
+  var occupiers = this._entityManager.findByTag([x, y].toString());
   if (occupiers) {
     var o;
     for (o of occupiers) {
@@ -137,7 +137,7 @@ Level.Board.isTileOccupied = function (x, y) {
 }
 
 Level.Board.tileOccupiers = function (position, onlyCollidables) {
-  var entities = this._entityManager.findByTag(position);
+  var entities = this._entityManager.findByTag(position.toString());
   if (entities && onlyCollidables) {
     // Lord but I *really* wanted to use a filter here, like Clojure has taught
     // me, but SURPRISE! Javascript only implements it for arrays. No filter for
@@ -207,11 +207,11 @@ Level.Board.isPassable = function (x, y) {
 }
 
 Level.Board.notifyAdded = function (entity) {
-  this._entityManager.addTag(entity, entity.position.getCurrentCoordinates());
+  this._entityManager.addTag(entity, entity.position.getCurrentCoordinates().toString());
 }
 
 Level.Board.notifyMoved = function (entity) {
   this._entityManager.replaceTag(entity,
-                                 entity.position.getLastCoordinates(),
-                                 entity.position.getCurrentCoordinates());
+                                 entity.position.getLastCoordinates().toString(),
+                                 entity.position.getCurrentCoordinates().toString());
 }
