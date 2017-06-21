@@ -119,8 +119,21 @@ var Game = {
 //    EntityBuilder.createShipEntity(this.board, this.manager, this.gameRand, 5, 15, EntityBuilder.Ships.Cruiser);
   },
 
+  // TODO: Clean up this 'detach all existing items from the board' code.
+  tryExecuteJump : function () {
+    var player = this.manager.findPlayer();
+    var jumpPoint = this.manager.findByComponent(Component.JumpPoint)[0];
+    if (player.position.distanceToEntity(jumpPoint) == 0) {
+      this.manager.removeComponent(player, Component.Position);
+      var entitiesOnBoard = this.manager.findByComponent(Component.Position);
+      for (var entity of entitiesOnBoard) {
+        this.manager.removeEntity(entity);
+      }
+      this.board = this.buildNewBoard(this.manager, this.boardRand);
+    }
+  },
+
   executeMove : function (dx, dy) {
-    this.lastInput = game.time.now;
     var cmd = Command.CreateMoveCommand(this.board, this.manager, dx, dy);
     var player = this.manager.findPlayer();
     return player.player.executeCommand(cmd);
@@ -133,6 +146,7 @@ var Game = {
     }
 
     switch (lastKey.keyCode) {
+      // Directions
       case Phaser.KeyCode.UP:
       case Phaser.KeyCode.NUMPAD_8:
       case Phaser.KeyCode.K:
@@ -168,6 +182,11 @@ var Game = {
       case Phaser.KeyCode.NUMPAD_7:
       case Phaser.KeyCode.Y:
         return this.executeMove(-1, -1);
+
+      // Jump Point
+      case Phaser.KeyCode.PERIOD:
+      case Phaser.KeyCode.COMMA:
+        return this.tryExecuteJump();
 
       default:
         return false;
@@ -243,6 +262,7 @@ var Game = {
     // Run your action(s) and end turn
     if (nextActor == manager.findPlayer()) {
       if (this.takeInput()) {
+        this.lastInput = game.time.now;
         nextActor.actor.endTurn();
         this.drawProjectilePaths(manager);
       }
