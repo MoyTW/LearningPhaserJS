@@ -8,6 +8,7 @@ var Game = {
   manager : null,
   boardRand : null,
   gameRand : null,
+  sector: 0,
 
   lastInput : 0,
 
@@ -46,11 +47,11 @@ var Game = {
       if (!intersects) {
         zones.push(newZone);
 
-        // These are current here just to mark boundaries
-        EntityBuilder.createSatellite(newBoard, this.manager, x, y);
-        EntityBuilder.createSatellite(newBoard, this.manager, x + width, y);
-        EntityBuilder.createSatellite(newBoard, this.manager, x, y + height);
-        EntityBuilder.createSatellite(newBoard, this.manager, x + width, y + height);
+        // These are currently here just to mark boundaries
+        EntityBuilder.createSatellite(newBoard, manager, x, y);
+        EntityBuilder.createSatellite(newBoard, manager, x + width, y);
+        EntityBuilder.createSatellite(newBoard, manager, x, y + height);
+        EntityBuilder.createSatellite(newBoard, manager, x + width, y + height);
       }
 
       zoneGenAttempts++;
@@ -59,7 +60,7 @@ var Game = {
     return zones;
   },
 
-  buildNewBoard : function (manager, boardRand) {
+  buildNewBoard : function (manager, boardRand, sector) {
     var newBoard = Level.Board.CreateEmptyBoard(manager,
                                                 Config.BOARD_WIDTH,
                                                 Config.BOARD_HEIGHT);
@@ -79,14 +80,14 @@ var Game = {
     var zones = Game.placeEmptyZones(manager, boardRand, newBoard);
 
     // Place the player in the first zone
-    var player = this.manager.findPlayer();
+    var player = manager.findPlayer();
     var center = zones[0].center;
     manager.addComponent(player, Component.Position.bind(null, newBoard, 0, 0));
     player.position.setCoordinates(center);
 
     // Add encounters to zones
     for (var i = 1; i < zones.length; i++) {
-      var encounter = EncounterPicker.chooseEncounter(boardRand, 0);
+      var encounter = EncounterPicker.chooseEncounter(boardRand, sector);
       zones[i].setEncounter(boardRand, newBoard, this.gameRand, encounter);
     }
 
@@ -110,7 +111,7 @@ var Game = {
     this.manager = ECS.EntityManager.Create();
     var skiffEntity = EntityBuilder.createNoPositionShipEntity(this.board, this.manager, this.gameRand, EntityBuilder.Ships.PlayerSkiff);
 
-    this.board = this.buildNewBoard(this.manager, this.boardRand);
+    this.board = this.buildNewBoard(this.manager, this.boardRand, this.sector);
 
     // Follow the skiff
     game.world.setBounds(0, 0, this.board.width * 30, this.board.height * 30);
@@ -129,7 +130,8 @@ var Game = {
       for (var entity of entitiesOnBoard) {
         this.manager.removeEntity(entity);
       }
-      this.board = this.buildNewBoard(this.manager, this.boardRand);
+      this.sector++;
+      this.board = this.buildNewBoard(this.manager, this.boardRand, this.sector);
     }
   },
 
